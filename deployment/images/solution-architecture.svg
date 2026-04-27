@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f1729"/>
+      <stop offset="100%" stop-color="#1a2744"/>
+    </linearGradient>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="112%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="620" rx="16" fill="url(#bg)"/>
+
+  <!-- Title -->
+  <text x="450" y="38" text-anchor="middle" fill="#ffffff" font-size="18" font-weight="700">Kuok Group — RFP Lifecycle Agent · Solution Architecture</text>
+
+  <!-- ── Layer 1: Microsoft Teams ── -->
+  <rect x="40" y="60" width="820" height="120" rx="12" fill="#1b3a6b" stroke="#3b82f6" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="60" y="85" fill="#93c5fd" font-size="13" font-weight="700">MICROSOFT TEAMS · Deal Room</text>
+
+  <!-- Agent cards -->
+  <rect x="70" y="100" width="220" height="60" rx="8" fill="#243d6a" stroke="#60a5fa" stroke-width="1"/>
+  <text x="180" y="126" text-anchor="middle" fill="#bfdbfe" font-size="12" font-weight="600">🤖 RFP Creator Agent</text>
+  <text x="180" y="146" text-anchor="middle" fill="#7dd3fc" font-size="10">Prepare · Draft · Enrich</text>
+
+  <rect x="340" y="100" width="220" height="60" rx="8" fill="#243d6a" stroke="#60a5fa" stroke-width="1"/>
+  <text x="450" y="126" text-anchor="middle" fill="#bfdbfe" font-size="12" font-weight="600">📧 RFP Issuer Agent</text>
+  <text x="450" y="146" text-anchor="middle" fill="#7dd3fc" font-size="10">Issue · Track · Remind</text>
+
+  <rect x="610" y="100" width="220" height="60" rx="8" fill="#243d6a" stroke="#60a5fa" stroke-width="1"/>
+  <text x="720" y="126" text-anchor="middle" fill="#bfdbfe" font-size="12" font-weight="600">📊 Evaluation Agent</text>
+  <text x="720" y="146" text-anchor="middle" fill="#7dd3fc" font-size="10">Score · Compare · Report</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="450" y1="180" x2="450" y2="200" stroke="#60a5fa" stroke-width="2" marker-end="url(#arrowBlue)"/>
+  <defs><marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#60a5fa"/></marker></defs>
+
+  <!-- ── Layer 2: Copilot Studio ── -->
+  <rect x="40" y="200" width="820" height="100" rx="12" fill="#1e2d4a" stroke="#8b5cf6" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="60" y="225" fill="#c4b5fd" font-size="13" font-weight="700">MICROSOFT COPILOT STUDIO</text>
+
+  <!-- Capability pills -->
+  <rect x="70" y="240" width="150" height="30" rx="15" fill="#312e81" stroke="#a78bfa" stroke-width="1"/>
+  <text x="145" y="260" text-anchor="middle" fill="#e0e7ff" font-size="11">Deep Reasoning</text>
+
+  <rect x="240" y="240" width="180" height="30" rx="15" fill="#312e81" stroke="#a78bfa" stroke-width="1"/>
+  <text x="330" y="260" text-anchor="middle" fill="#e0e7ff" font-size="11">Generative Orchestration</text>
+
+  <rect x="440" y="240" width="170" height="30" rx="15" fill="#312e81" stroke="#a78bfa" stroke-width="1"/>
+  <text x="525" y="260" text-anchor="middle" fill="#e0e7ff" font-size="11">Knowledge Sources</text>
+
+  <rect x="630" y="240" width="190" height="30" rx="15" fill="#312e81" stroke="#a78bfa" stroke-width="1"/>
+  <text x="725" y="260" text-anchor="middle" fill="#e0e7ff" font-size="11">Autonomous Triggers</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="450" y1="300" x2="450" y2="320" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowPurple)"/>
+  <defs><marker id="arrowPurple" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#8b5cf6"/></marker></defs>
+
+  <!-- ── Layer 3: Power Automate ── -->
+  <rect x="40" y="320" width="820" height="110" rx="12" fill="#1a2e2e" stroke="#14b8a6" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="60" y="345" fill="#5eead4" font-size="13" font-weight="700">POWER AUTOMATE FLOWS</text>
+
+  <!-- Flow cards row 1 -->
+  <rect x="70" y="358" width="130" height="28" rx="6" fill="#134e4a" stroke="#2dd4bf" stroke-width="0.8"/>
+  <text x="135" y="377" text-anchor="middle" fill="#ccfbf1" font-size="10">Template Population</text>
+
+  <rect x="215" y="358" width="130" height="28" rx="6" fill="#134e4a" stroke="#2dd4bf" stroke-width="0.8"/>
+  <text x="280" y="377" text-anchor="middle" fill="#ccfbf1" font-size="10">Email Issuance</text>
+
+  <rect x="360" y="358" width="130" height="28" rx="6" fill="#134e4a" stroke="#2dd4bf" stroke-width="0.8"/>
+  <text x="425" y="377" text-anchor="middle" fill="#ccfbf1" font-size="10">Response Collection</text>
+
+  <!-- Flow cards row 2 -->
+  <rect x="505" y="358" width="150" height="28" rx="6" fill="#134e4a" stroke="#2dd4bf" stroke-width="0.8"/>
+  <text x="580" y="377" text-anchor="middle" fill="#ccfbf1" font-size="10">Evaluation Orchestration</text>
+
+  <rect x="670" y="358" width="130" height="28" rx="6" fill="#134e4a" stroke="#2dd4bf" stroke-width="0.8"/>
+  <text x="735" y="377" text-anchor="middle" fill="#ccfbf1" font-size="10">Report Generation</text>
+
+  <rect x="70" y="394" width="130" height="28" rx="6" fill="#134e4a" stroke="#2dd4bf" stroke-width="0.8"/>
+  <text x="135" y="413" text-anchor="middle" fill="#ccfbf1" font-size="10">Approval Routing</text>
+
+  <!-- Arrow 3→4 -->
+  <line x1="350" y1="430" x2="350" y2="450" stroke="#14b8a6" stroke-width="2" marker-end="url(#arrowTeal)"/>
+  <defs><marker id="arrowTeal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#14b8a6"/></marker></defs>
+
+  <!-- Arrow 3→Outlook -->
+  <line x1="700" y1="430" x2="700" y2="450" stroke="#f97316" stroke-width="2" marker-end="url(#arrowOrange)"/>
+  <defs><marker id="arrowOrange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#f97316"/></marker></defs>
+
+  <!-- ── Layer 4a: SharePoint ── -->
+  <rect x="40" y="450" width="560" height="150" rx="12" fill="#1e2a1e" stroke="#22c55e" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="60" y="475" fill="#86efac" font-size="13" font-weight="700">SHAREPOINT DOCUMENT LIBRARIES</text>
+
+  <!-- Doc library cards -->
+  <rect x="60" y="490" width="120" height="30" rx="6" fill="#14532d" stroke="#4ade80" stroke-width="0.8"/>
+  <text x="120" y="510" text-anchor="middle" fill="#dcfce7" font-size="10">📄 RFP Templates</text>
+
+  <rect x="195" y="490" width="120" height="30" rx="6" fill="#14532d" stroke="#4ade80" stroke-width="0.8"/>
+  <text x="255" y="510" text-anchor="middle" fill="#dcfce7" font-size="10">📨 Issued RFPs</text>
+
+  <rect x="330" y="490" width="130" height="30" rx="6" fill="#14532d" stroke="#4ade80" stroke-width="0.8"/>
+  <text x="395" y="510" text-anchor="middle" fill="#dcfce7" font-size="10">📬 Partner Responses</text>
+
+  <rect x="475" y="490" width="115" height="30" rx="6" fill="#14532d" stroke="#4ade80" stroke-width="0.8"/>
+  <text x="532" y="510" text-anchor="middle" fill="#dcfce7" font-size="10">📝 Eval Reports</text>
+
+  <rect x="60" y="535" width="120" height="30" rx="6" fill="#14532d" stroke="#4ade80" stroke-width="0.8"/>
+  <text x="120" y="555" text-anchor="middle" fill="#dcfce7" font-size="10">⚖️ Standard Terms</text>
+
+  <rect x="195" y="535" width="130" height="30" rx="6" fill="#14532d" stroke="#4ade80" stroke-width="0.8"/>
+  <text x="260" y="555" text-anchor="middle" fill="#dcfce7" font-size="10">📚 Knowledge Base</text>
+
+  <!-- ── Layer 4b: Outlook ── -->
+  <rect x="620" y="450" width="240" height="150" rx="12" fill="#2d1f0e" stroke="#f97316" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="640" y="475" fill="#fdba74" font-size="13" font-weight="700">OUTLOOK / EXCHANGE</text>
+
+  <rect x="640" y="495" width="200" height="30" rx="6" fill="#431407" stroke="#fb923c" stroke-width="0.8"/>
+  <text x="740" y="515" text-anchor="middle" fill="#ffedd5" font-size="10">📧 RFP Distribution</text>
+
+  <rect x="640" y="535" width="200" height="30" rx="6" fill="#431407" stroke="#fb923c" stroke-width="0.8"/>
+  <text x="740" y="555" text-anchor="middle" fill="#ffedd5" font-size="10">📩 Response Collection</text>
+
+  <rect x="640" y="575" width="200" height="30" rx="6" fill="#431407" stroke="#fb923c" stroke-width="0.8"/>
+  <text x="740" y="595" text-anchor="middle" fill="#ffedd5" font-size="10">⏰ Deadline Reminders</text>
+</svg>
