@@ -22,8 +22,8 @@ Kuok Group's IT team needs a repeatable, AI-powered solution to:
 ## 🏗️ Solution Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Microsoft Teams (Deal Room)                  │
+┌────────────────────────────────────────────────────────────────┐
+│                    Microsoft Teams (Deal Room)                 │
 │   ┌──────────┐  ┌──────────────┐  ┌──────────────────────────┐ │
 │   │ RFP      │  │ RFP Issuer   │  │ Evaluation Report        │ │
 │   │ Creator  │  │ Agent        │  │ Generator Agent          │ │
@@ -33,25 +33,25 @@ Kuok Group's IT team needs a repeatable, AI-powered solution to:
 ├────────┼───────────────┼─────────────────────┼─────────────────┤
 │        ▼               ▼                     ▼                 │
 │   ┌─────────────────────────────────────────────────────────┐  │
-│   │              Microsoft Copilot Studio                    │  │
-│   │  • Deep Reasoning    • Generative Orchestration          │  │
-│   │  • Knowledge Sources • Autonomous Triggers               │  │
+│   │              Microsoft Copilot Studio                   │  │
+│   │  • Deep Reasoning    • Generative Orchestration         │  │
+│   │  • Knowledge Sources • Autonomous Triggers              │  │
 │   └────────────────────────┬────────────────────────────────┘  │
 │                            │                                   │
 │   ┌────────────────────────▼────────────────────────────────┐  │
-│   │              Power Automate Flows                        │  │
-│   │  • RFP Template Population    • Email Issuance           │  │
-│   │  • Response Collection        • Evaluation Orchestration │  │
-│   │  • Report Generation          • Approval Routing         │  │
+│   │              Power Automate Flows                       │  │
+│   │  • RFP Template Population    • Email Issuance          │  │
+│   │  • Response Collection        • Evaluation Orchestration│  │
+│   │  • Report Generation          • Approval Routing        │  │
 │   └────────────────────────┬────────────────────────────────┘  │
 │                            │                                   │
 │   ┌────────────────────────▼────────────────────────────────┐  │
-│   │              SharePoint Document Libraries               │  │
-│   │  • RFP Templates     • Issued RFPs                       │  │
-│   │  • Partner Responses  • Evaluation Reports               │  │
-│   │  • Standard Terms     • Knowledge Base                   │  │
+│   │              SharePoint Document Libraries              │  │
+│   │  • RFP Templates     • Issued RFPs                      │  │
+│   │  • Partner Responses  • Evaluation Reports              │  │
+│   │  • Standard Terms     • Knowledge Base                  │  │
 │   └─────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
+└────────────────────────────────────────────────────────────────┘
 ```
 
 ---
