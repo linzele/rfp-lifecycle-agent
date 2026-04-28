@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flows 02–06 — Power Automate Build Guides</title>
+<title>Flows 01–06 — Power Automate Build Guides</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=Fragment+Mono:wght@400&display=swap" rel="stylesheet">
@@ -167,6 +167,7 @@
 
 <!-- Mobile Nav -->
 <nav class="mobile-nav">
+  <a href="#flow-01">01 Creation</a>
   <a href="#flow-02">02 Issuance</a>
   <a href="#flow-03">03 Response</a>
   <a href="#flow-04">04 Reminder</a>
@@ -178,19 +179,198 @@
 <!-- Sidebar TOC -->
 <nav class="sidebar">
   <h2>Flow Guides</h2>
+  <a href="#flow-01"><span class="flow-num" style="background:var(--green)">01</span>RFP Creation</a>
   <a href="#flow-02"><span class="flow-num" style="background:var(--navy)">02</span>RFP Issuance</a>
   <a href="#flow-03"><span class="flow-num" style="background:var(--teal)">03</span>Response Collection</a>
   <a href="#flow-04"><span class="flow-num" style="background:var(--amber)">04</span>Deadline Reminder</a>
   <a href="#flow-05"><span class="flow-num" style="background:var(--plum)">05</span>Evaluation Report</a>
   <a href="#flow-06"><span class="flow-num" style="background:var(--rose)">06</span>Post-Deadline Summary</a>
-  <div style="margin-top:32px;padding-top:16px;border-top:1px solid var(--border)">
-    <a href="flow-01-rfp-creation-guide.html" style="font-size:11px;color:var(--text-dim)">
-      <span class="flow-num" style="background:var(--green);width:18px;height:18px;line-height:18px;font-size:9px">01</span>RFP Creation (separate page)
-    </a>
-  </div>
 </nav>
 
 <main class="main">
+
+<!-- ============================================================ -->
+<!--  FLOW 01 — RFP CREATION                                      -->
+<!-- ============================================================ -->
+<section class="flow-section animate" style="--i:0" id="flow-01">
+  <div class="flow-header" style="background:var(--green-dim);border-color:var(--green)">
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <span class="trigger-badge" style="background:var(--green)">COPILOT STUDIO TRIGGER</span>
+    </div>
+    <h2>Flow 01 — RFP Creation</h2>
+    <p class="flow-purpose">Receives inputs from the Copilot Studio RFP Creator agent, selects the correct Word template based on engagement type, populates it with project data, saves to SharePoint, creates a tracking entry, and notifies via Teams.</p>
+    <div class="connectors">
+      <span class="connector-badge">SharePoint</span>
+      <span class="connector-badge">Word Online (Business)</span>
+      <span class="connector-badge">Microsoft Teams</span>
+    </div>
+  </div>
+
+  <div class="flow-diagram animate" style="--i:1">
+    <div class="fd-node" style="color:var(--green);border-color:var(--green);background:var(--green-dim)">Trigger</div>
+    <span class="fd-arrow">&rarr;</span>
+    <div class="fd-node" style="color:var(--gold);border-color:var(--gold);background:var(--gold-dim)">Init Variables</div>
+    <span class="fd-arrow">&rarr;</span>
+    <div class="fd-node" style="color:var(--plum);border-color:var(--plum);background:var(--plum-dim)">Switch Type</div>
+    <span class="fd-arrow">&rarr;</span>
+    <div class="fd-node" style="color:var(--teal);border-color:var(--teal);background:var(--teal-dim)">Populate Word</div>
+    <span class="fd-arrow">&rarr;</span>
+    <div class="fd-node" style="color:var(--navy);border-color:var(--navy);background:var(--navy-dim)">Create File</div>
+    <span class="fd-arrow">&rarr;</span>
+    <div class="fd-node" style="color:var(--rose);border-color:var(--rose);background:var(--rose-dim)">Track + Notify</div>
+    <span class="fd-arrow">&rarr;</span>
+    <div class="fd-node" style="color:var(--green);border-color:var(--green);background:var(--green-dim)">Respond</div>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="step animate" style="--i:2">
+    <div class="step-num" style="background:var(--green)">1</div>
+    <h3>Create the Flow from Copilot Studio</h3>
+    <p class="sd">Open <strong>Copilot Studio</strong> &gt; <strong>RFP Creator Agent</strong> &gt; <strong>Create RFP</strong> topic &gt; Call an action &gt; <strong>Create a new flow</strong>. Name: <code>RFP Creation - Populate Template</code>.</p>
+    <div class="co co--tip"><strong>Tip:</strong> Creating flows from Copilot Studio auto-registers them. You will not need to manually link the flow ID later.</div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step animate" style="--i:3">
+    <div class="step-num" style="background:var(--green)">2</div>
+    <h3>Configure Trigger Inputs <span class="at">Trigger</span></h3>
+    <p class="sd">Click the trigger step. Click <strong>+ Add an input</strong> for each parameter. Select <strong>Text</strong> as the type for all.</p>
+    <table class="ct">
+      <thead><tr><th>Input Name</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>rfpReference</code></td><td>Text</td><td>Yes</td><td>RFP reference number (e.g., KG-RFP-2026-001)</td></tr>
+        <tr><td><code>engagementType</code></td><td>Text</td><td>Yes</td><td>Turnkey, ManagedServices, or AugmentedResources</td></tr>
+        <tr><td><code>projectName</code></td><td>Text</td><td>Yes</td><td>Name of the project</td></tr>
+        <tr><td><code>projectDescription</code></td><td>Text</td><td>No</td><td>Brief scope and objectives</td></tr>
+        <tr><td><code>budgetRange</code></td><td>Text</td><td>No</td><td>Budget estimate (e.g., SGD 500K to 1M)</td></tr>
+        <tr><td><code>timeline</code></td><td>Text</td><td>No</td><td>Expected project timeline</td></tr>
+        <tr><td><code>submissionDeadline</code></td><td>Text</td><td>No</td><td>Partner submission deadline</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step animate" style="--i:4">
+    <div class="step-num" style="background:var(--gold)">3</div>
+    <h3>Initialize Variables <span class="at">Variable</span></h3>
+    <p class="sd">Add two <strong>Initialize variable</strong> actions:</p>
+    <table class="ct">
+      <thead><tr><th>Variable Name</th><th>Type</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td><code>rfpReference</code></td><td>String</td><td>rfpReference from Dynamic content (trigger)</td></tr>
+        <tr><td><code>templatePath</code></td><td>String</td><td>Leave empty — set by Switch in next step</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step animate" style="--i:5">
+    <div class="step-num" style="background:var(--plum)">4</div>
+    <h3>Switch on Engagement Type <span class="at">Control</span></h3>
+    <p class="sd">Add a <strong>Switch</strong> action. Set <strong>On</strong> to <code>engagementType</code> from Dynamic content. Add 3 cases, each with a <strong>Set variable</strong> action for <code>templatePath</code>:</p>
+    <table class="ct">
+      <thead><tr><th>Case</th><th>Equals</th><th>Set templatePath to</th></tr></thead>
+      <tbody>
+        <tr><td>Case 1</td><td><code>Turnkey</code></td><td><code>/RFP Templates/Turnkey Project/rfp-template.docx</code></td></tr>
+        <tr><td>Case 2</td><td><code>ManagedServices</code></td><td><code>/RFP Templates/Managed Services/rfp-template.docx</code></td></tr>
+        <tr><td>Case 3</td><td><code>AugmentedResources</code></td><td><code>/RFP Templates/Augmented Resources/rfp-template.docx</code></td></tr>
+      </tbody>
+    </table>
+    <div class="co co--warn"><strong>Important:</strong> Case values are case-sensitive and must match exactly what Copilot Studio sends.</div>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step animate" style="--i:6">
+    <div class="step-num" style="background:var(--teal)">5</div>
+    <h3>Populate a Word Template <span class="at">Word Online (Business)</span></h3>
+    <p class="sd">Add <strong>Populate a Microsoft Word template</strong> action.</p>
+    <table class="ct">
+      <thead><tr><th>Field</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td><code>Location</code></td><td>Your SharePoint site</td></tr>
+        <tr><td><code>Document Library</code></td><td>Select your document library</td></tr>
+        <tr><td><code>File</code></td><td><code>templatePath</code> variable (Dynamic content)</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:10px;font-size:13px;">Map each template placeholder to trigger inputs:</p>
+    <table class="ct">
+      <thead><tr><th>Placeholder</th><th>Dynamic Content</th></tr></thead>
+      <tbody>
+        <tr><td><code>rfpReference</code></td><td>rfpReference (variable)</td></tr>
+        <tr><td><code>projectName</code></td><td>projectName (trigger)</td></tr>
+        <tr><td><code>projectDescription</code></td><td>projectDescription (trigger)</td></tr>
+        <tr><td><code>budgetRange</code></td><td>budgetRange (trigger)</td></tr>
+        <tr><td><code>timeline</code></td><td>timeline (trigger)</td></tr>
+        <tr><td><code>submissionDeadline</code></td><td>submissionDeadline (trigger)</td></tr>
+      </tbody>
+    </table>
+    <div class="co co--warn"><strong>Prerequisite:</strong> Word template (.docx) files must exist at the paths above in SharePoint, each with Plain Text content controls matching the placeholder names.</div>
+  </div>
+
+  <!-- Step 6 -->
+  <div class="step animate" style="--i:7">
+    <div class="step-num" style="background:var(--navy)">6</div>
+    <h3>Create File in SharePoint <span class="at">SharePoint</span></h3>
+    <table class="ct">
+      <thead><tr><th>Field</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td><code>Site Address</code></td><td>Your SharePoint site URL</td></tr>
+        <tr><td><code>Folder Path</code></td><td><code>/Issued RFPs/</code> + rfpReference variable</td></tr>
+        <tr><td><code>File Name</code></td><td>rfpReference + <code>-RFP.docx</code></td></tr>
+        <tr><td><code>File Content</code></td><td>Microsoft Word Document (from Populate step)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Step 7 -->
+  <div class="step animate" style="--i:8">
+    <div class="step-num" style="background:var(--rose)">7</div>
+    <h3>Create Tracking Item <span class="at">SharePoint</span></h3>
+    <p class="sd"><strong>Create item</strong> in the RFP Tracking list:</p>
+    <table class="ct">
+      <thead><tr><th>Field</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td><code>List Name</code></td><td>RFP Tracking</td></tr>
+        <tr><td><code>Title</code></td><td>rfpReference (variable)</td></tr>
+        <tr><td><code>ProjectName</code></td><td>projectName (trigger)</td></tr>
+        <tr><td><code>EngagementType</code></td><td>engagementType (trigger)</td></tr>
+        <tr><td><code>Status</code></td><td><code>Draft</code></td></tr>
+        <tr><td><code>SubmissionDeadline</code></td><td>submissionDeadline (trigger)</td></tr>
+      </tbody>
+    </table>
+    <div class="co co--warn"><strong>Prerequisite:</strong> Create a SharePoint list <strong>RFP Tracking</strong> with columns: Title (text), ProjectName (text), EngagementType (choice), Status (choice: Draft/Issued/Collecting/Evaluating/Complete), SubmissionDeadline (date).</div>
+  </div>
+
+  <!-- Step 8 -->
+  <div class="step animate" style="--i:9">
+    <div class="step-num" style="background:var(--navy)">8</div>
+    <h3>Post Teams Notification <span class="at">Teams</span></h3>
+    <p class="sd"><strong>Post message in a chat or channel</strong>: Post as Flow bot, in Channel. Select your RFP team and Deal Room channel.</p>
+    <div class="co co--info">
+      <strong>Message:</strong><br>
+      New RFP Created: <strong>[rfpReference]</strong><br>
+      Project: <strong>[projectName]</strong><br>
+      Type: <strong>[engagementType]</strong><br>
+      Deadline: <strong>[submissionDeadline]</strong>
+    </div>
+  </div>
+
+  <!-- Step 9 -->
+  <div class="step animate" style="--i:10">
+    <div class="step-num" style="background:var(--green)">9</div>
+    <h3>Respond to Copilot Studio <span class="at">Response</span></h3>
+    <p class="sd">Click the auto-created <strong>Respond to Copilot</strong> action. Add 2 outputs:</p>
+    <table class="ct">
+      <thead><tr><th>Output Name</th><th>Type</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td><code>rfpReference</code></td><td>Text</td><td>rfpReference (variable)</td></tr>
+        <tr><td><code>documentUrl</code></td><td>Text</td><td>Path (from Create File output)</td></tr>
+      </tbody>
+    </table>
+    <div class="co co--tip"><strong>Done!</strong> Save the flow. Return to Copilot Studio, select the flow in the action node, and map topic variables to flow inputs/outputs. Test by saying "Create an RFP" in the test pane.</div>
+  </div>
+</section>
+
 
 <!-- ============================================================ -->
 <!--  FLOW 02 — RFP ISSUANCE                                      -->
