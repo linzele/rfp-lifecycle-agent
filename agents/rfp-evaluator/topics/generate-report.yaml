@@ -54,4 +54,4 @@ beginDialog:
       id: report_generated
       activity:
         text:
-          -  Evaluation Report Generated!   Report: {Topic.ReportReference}  Document: {Topic.ReportUrl}  Recommendation: {Topic.Recommendation}  The report has been posted to the Teams Deal Room for review. Approvers can click Approve or Request Changes on the Adaptive Card.   RFP lifecycle for {Topic.RFPReference} is now pending approval.
+          -  Evaluation Report Generated!   Report {Topic.ReportReference}  Document {Topic.ReportUrl}  Recommendation {Topic.Recommendation}  The report has been posted to the Teams Deal Room for review. Approvers can click Approve or Request Changes on the Adaptive Card.   RFP lifecycle for {Topic.RFPReference} is now pending approval.

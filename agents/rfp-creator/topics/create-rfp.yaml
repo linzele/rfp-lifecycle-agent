@@ -76,7 +76,7 @@ beginDialog:
       id: confirm_details
       activity:
         text:
-          -  RFP Summary  Please Confirm   Project: {Topic.ProjectName}  Type: {Topic.EngagementType}  Description: {Topic.ProjectDescription}  Budget: {Topic.BudgetRange}  Timeline: {Topic.Timeline}  Deadline: {Topic.SubmissionDeadline}  Shall I generate the RFP document now?
+          -  RFP Summary  Please Confirm   Project {Topic.ProjectName}  Type {Topic.EngagementType}  Description {Topic.ProjectDescription}  Budget {Topic.BudgetRange}  Timeline {Topic.Timeline}  Deadline {Topic.SubmissionDeadline}  Shall I generate the RFP document now?
 
     - kind: Question
       id: ask_confirm
@@ -112,7 +112,7 @@ beginDialog:
               id: success_message
               activity:
                 text:
-                  -  RFP Generated Successfully!   Reference: {Topic.RFPReference}  Document: {Topic.DocumentUrl}  The RFP has been saved to the SharePoint document library. You can now:  Say Issue RFP to send it to partners  Say Edit RFP to make changes
+                  -  RFP Generated Successfully!   Reference {Topic.RFPReference}  Document {Topic.DocumentUrl}  The RFP has been saved to the SharePoint document library. You can now  Say Issue RFP to send it to partners  Say Edit RFP to make changes
 
       elseActions:
         - kind: SendActivity

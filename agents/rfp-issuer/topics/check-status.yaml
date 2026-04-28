@@ -40,4 +40,4 @@ beginDialog:
       id: status_message
       activity:
         text:
-          -  RFP Status: {Topic.RFPReference}   Status: {Topic.RFPStatus}  Deadline: {Topic.Deadline}  Responses: {Topic.ResponsesReceived} / {Topic.TotalPartners}  Pending: {Topic.ResponsesPending}  Partner Details: {Topic.PartnerDetails}  Would you like me to send reminders to partners who have not responded?
+          -  RFP Status {Topic.RFPReference}   Status {Topic.RFPStatus}  Deadline {Topic.Deadline}  Responses {Topic.ResponsesReceived} / {Topic.TotalPartners}  Pending {Topic.ResponsesPending}  Partner Details {Topic.PartnerDetails}  Would you like me to send reminders to partners who have not responded?

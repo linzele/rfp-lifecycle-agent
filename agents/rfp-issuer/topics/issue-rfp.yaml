@@ -33,7 +33,7 @@ beginDialog:
       id: partner_instructions
       activity:
         text:
-          - Please provide each partner details in this format:  Name, Company, Email  For example: John Doe, Acme Corp, john@acme.com  Enter one partner per message. Type Done when finished.
+          - Please provide each partner details in this format  Name, Company, Email  For example John Doe, Acme Corp, john@acme.com  Enter one partner per message. Type Done when finished.
 
     - kind: Question
       id: collect_partners
@@ -71,7 +71,7 @@ beginDialog:
       id: confirm_issuance
       activity:
         text:
-          -  RFP Issuance Summary  Please Confirm   RFP: {Topic.RFPReference}  Partners: {Topic.PartnerCount} recipients  Submission Deadline: {Topic.SubmissionDeadline}  QA Deadline: {Topic.QADeadline}  Contact: {Topic.ContactPerson}   This will send the RFP email to all listed partners. Proceed?
+          -  RFP Issuance Summary  Please Confirm   RFP {Topic.RFPReference}  Partners {Topic.PartnerCount} recipients  Submission Deadline {Topic.SubmissionDeadline}  QA Deadline {Topic.QADeadline}  Contact {Topic.ContactPerson}   This will send the RFP email to all listed partners. Proceed?
 
     - kind: Question
       id: ask_confirm
@@ -105,7 +105,7 @@ beginDialog:
               id: success_message
               activity:
                 text:
-                  -  RFP Issued Successfully!   RFP: {Topic.RFPReference}  Emails sent: {Topic.IssuedCount}  Tracking: Active in SharePoint  I will monitor responses and send reminders automatically. Say Check Status anytime to see progress.
+                  -  RFP Issued Successfully!   RFP {Topic.RFPReference}  Emails sent {Topic.IssuedCount}  Tracking Active in SharePoint  I will monitor responses and send reminders automatically. Say Check Status anytime to see progress.
 
       elseActions:
         - kind: SendActivity
