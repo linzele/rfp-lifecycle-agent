@@ -1,0 +1,179 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "metadata": {
+    "name": "Deadline Reminder — Approaching Deadline",
+    "description": "Runs daily at 9 AM SGT. Checks for RFPs with approaching deadlines and sends reminder emails to partners who haven't responded.",
+    "category": "KuokRFPLifecycle"
+  },
+  "connectionReferences": {
+    "shared_sharepointonline": {
+      "runtimeSource": "embedded",
+      "connection": { "connectionReferenceLogicalName": "kg_sharepoint_connection" },
+      "api": { "name": "shared_sharepointonline" }
+    },
+    "shared_office365": {
+      "runtimeSource": "embedded",
+      "connection": { "connectionReferenceLogicalName": "kg_outlook_connection" },
+      "api": { "name": "shared_office365" }
+    },
+    "shared_teams": {
+      "runtimeSource": "embedded",
+      "connection": { "connectionReferenceLogicalName": "kg_teams_connection" },
+      "api": { "name": "shared_teams" }
+    }
+  },
+  "definition": {
+    "contentVersion": "1.0.0.0",
+    "triggers": {
+      "Recurrence_Daily_9AM_SGT": {
+        "type": "Recurrence",
+        "recurrence": {
+          "frequency": "Day",
+          "interval": 1,
+          "startTime": "2026-01-01T09:00:00",
+          "timeZone": "Singapore Standard Time"
+        }
+      }
+    },
+    "actions": {
+      "Initialize_Reminder_Count": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [{ "name": "reminderCount", "type": "integer", "value": 0 }]
+        },
+        "runAfter": {}
+      },
+      "Get_Active_RFPs": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "CONFIGURE_SHAREPOINT_SITE_URL",
+            "table": "RFP Tracking",
+            "$filter": "Status eq 'Issued' or Status eq 'Collecting'"
+          }
+        },
+        "runAfter": { "Initialize_Reminder_Count": ["Succeeded"] }
+      },
+      "For_Each_Active_RFP": {
+        "type": "Foreach",
+        "foreach": "@body('Get_Active_RFPs')?['value']",
+        "actions": {
+          "Calculate_Days_Until_Deadline": {
+            "type": "Compose",
+            "inputs": "@div(sub(ticks(items('For_Each_Active_RFP')?['SubmissionDeadline']), ticks(utcNow())), 864000000000)"
+          },
+          "Check_Deadline_Proximity": {
+            "type": "If",
+            "expression": {
+              "or": [
+                { "lessOrEquals": ["@outputs('Calculate_Days_Until_Deadline')", 7] },
+                { "lessOrEquals": ["@outputs('Calculate_Days_Until_Deadline')", 2] }
+              ]
+            },
+            "actions": {
+              "Get_Pending_Partners": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "GetItems",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                  },
+                  "parameters": {
+                    "dataset": "CONFIGURE_SHAREPOINT_SITE_URL",
+                    "table": "Partner Tracking",
+                    "$filter": "RFPReference eq '@{items('For_Each_Active_RFP')?['Title']}' and ResponseReceived eq 0"
+                  }
+                }
+              },
+              "Set_Reminder_Type": {
+                "type": "Compose",
+                "inputs": "@if(lessOrEquals(outputs('Calculate_Days_Until_Deadline'), 2), 'FINAL', 'COURTESY')",
+                "runAfter": { "Get_Pending_Partners": ["Succeeded"] }
+              },
+              "For_Each_Pending_Partner": {
+                "type": "Foreach",
+                "foreach": "@body('Get_Pending_Partners')?['value']",
+                "actions": {
+                  "Send_Reminder_Email": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "connectionName": "shared_office365",
+                        "operationId": "SendEmailV2",
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+                      },
+                      "parameters": {
+                        "emailMessage/To": "@items('For_Each_Pending_Partner')['Email']",
+                        "emailMessage/Subject": "@{outputs('Set_Reminder_Type')} REMINDER: @{items('For_Each_Active_RFP')?['Title']} — Response Due @{items('For_Each_Active_RFP')?['SubmissionDeadline']}",
+                        "emailMessage/Body": "<html><body><p>Dear @{items('For_Each_Pending_Partner')['PartnerName']},</p><p>This is a <strong>@{toLower(outputs('Set_Reminder_Type'))} reminder</strong> that the submission deadline for <strong>@{items('For_Each_Active_RFP')?['Title']}</strong> is approaching.</p><p><strong>Deadline:</strong> @{items('For_Each_Active_RFP')?['SubmissionDeadline']}<br/><strong>Days remaining:</strong> @{outputs('Calculate_Days_Until_Deadline')}</p><p>Please submit your response at your earliest convenience.</p><p>Best regards,<br/>Kuok Group IT</p></body></html>",
+                        "emailMessage/Importance": "@if(equals(outputs('Set_Reminder_Type'), 'FINAL'), 'High', 'Normal')"
+                      }
+                    }
+                  },
+                  "Update_Reminder_Count_On_Partner": {
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "connectionName": "shared_sharepointonline",
+                        "operationId": "PatchItem",
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                      },
+                      "parameters": {
+                        "dataset": "CONFIGURE_SHAREPOINT_SITE_URL",
+                        "table": "Partner Tracking",
+                        "id": "@{items('For_Each_Pending_Partner')['ID']}",
+                        "item": {
+                          "RemindersSent": "@add(items('For_Each_Pending_Partner')['RemindersSent'], 1)"
+                        }
+                      }
+                    },
+                    "runAfter": { "Send_Reminder_Email": ["Succeeded"] }
+                  },
+                  "Increment_Total_Reminders": {
+                    "type": "IncrementVariable",
+                    "inputs": { "name": "reminderCount", "value": 1 },
+                    "runAfter": { "Update_Reminder_Count_On_Partner": ["Succeeded"] }
+                  }
+                },
+                "runAfter": { "Set_Reminder_Type": ["Succeeded"] }
+              }
+            },
+            "else": { "actions": {} }
+          }
+        },
+        "runAfter": { "Get_Active_RFPs": ["Succeeded"] }
+      },
+      "Post_Reminder_Summary": {
+        "type": "If",
+        "expression": { "greater": ["@variables('reminderCount')", 0] },
+        "actions": {
+          "Post_To_Teams": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "shared_teams",
+                "operationId": "PostCardToConversation",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_teams"
+              },
+              "parameters": {
+                "poster": "Flow bot",
+                "location": "Channel",
+                "body/recipient": "CONFIGURE_TEAMS_CHANNEL_ID",
+                "body/messageBody": "⏰ **Daily Reminder Summary**\n\n**Reminders sent:** @{variables('reminderCount')}\n**Date:** @{formatDateTime(utcNow(), 'yyyy-MM-dd')}"
+              }
+            }
+          }
+        },
+        "else": { "actions": {} },
+        "runAfter": { "For_Each_Active_RFP": ["Succeeded"] }
+      }
+    }
+  },
+  "schemaVersion": "1.0.0.0"
+}

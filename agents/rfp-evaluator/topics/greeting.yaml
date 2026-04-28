@@ -1,0 +1,20 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    displayName: Greeting
+    includeInOnSelectIntent: false
+    triggerQueries:
+      - Hello
+      - Hi
+      - Start
+      - Help me evaluate responses
+      - I need to evaluate an RFP
+      - RFP Evaluator
+  actions:
+    - kind: SendActivity
+      id: greeting_message
+      activity:
+        text:
+          - "👋 Welcome to the **Kuok Group RFP Evaluator Agent**!\n\nI can help you:\n\n• **Evaluate RFP responses** against defined criteria with AI-assisted scoring\n• **Compare proposals** across partners (technical, commercial, risk)\n• **Generate evaluation reports** for internal approval\n\nSay **\"Evaluate Responses\"** to start an evaluation, or **\"Generate Report\"** to compile findings."

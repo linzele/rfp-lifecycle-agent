@@ -1,0 +1,144 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    displayName: Issue RFP
+    includeInOnSelectIntent: true
+    triggerQueries:
+      - Issue RFP
+      - Send RFP
+      - Distribute RFP
+      - Send RFP to partners
+      - Email the RFP
+      - Issue the request for proposal
+  actions:
+    # Step 1: Ask for RFP Reference
+    - kind: Question
+      id: ask_rfp_reference
+      interruptionPolicy:
+        allowInterruption: true
+      variable: init:Topic.RFPReference
+      prompt: "What is the **RFP Reference number** (e.g., KG-RFP-2026-001)?"
+      entity:
+        kind: EmbeddedEntity
+        definition:
+          kind: StringEntity
+
+    # Step 2: Ask for Partner Details
+    - kind: Question
+      id: ask_partner_count
+      interruptionPolicy:
+        allowInterruption: true
+      variable: init:Topic.PartnerCount
+      prompt: "How many **partners** should receive this RFP?"
+      entity:
+        kind: EmbeddedEntity
+        definition:
+          kind: NumberEntity
+
+    # Step 3: Collect partner details (repeat for each partner)
+    - kind: SendActivity
+      id: partner_instructions
+      activity:
+        text:
+          - "Please provide each partner's details in this format:\n\n**Name, Company, Email**\n\nFor example:\n`John Doe, Acme Corp, john@acme.com`\n\nEnter one partner per message. Type **\"Done\"** when finished."
+
+    - kind: Question
+      id: collect_partners
+      interruptionPolicy:
+        allowInterruption: true
+      variable: init:Topic.PartnerList
+      prompt: "Enter partner details (Name, Company, Email):"
+      entity:
+        kind: EmbeddedEntity
+        definition:
+          kind: StringEntity
+
+    # Step 4: Ask for Submission Deadline
+    - kind: Question
+      id: ask_deadline
+      interruptionPolicy:
+        allowInterruption: true
+      variable: init:Topic.SubmissionDeadline
+      prompt: "What is the **submission deadline** for partner responses?"
+      entity:
+        kind: EmbeddedEntity
+        definition:
+          kind: DateTimeEntity
+
+    # Step 5: Ask for Q&A Deadline
+    - kind: Question
+      id: ask_qa_deadline
+      interruptionPolicy:
+        allowInterruption: true
+      variable: init:Topic.QADeadline
+      prompt: "What is the **Q&A deadline** (date by which partners can ask clarification questions)?"
+      entity:
+        kind: EmbeddedEntity
+        definition:
+          kind: DateTimeEntity
+
+    # Step 6: Ask for Contact Person
+    - kind: Question
+      id: ask_contact
+      interruptionPolicy:
+        allowInterruption: true
+      variable: init:Topic.ContactPerson
+      prompt: "Who is the **contact person** for this RFP? (Name, Email)"
+      entity:
+        kind: EmbeddedEntity
+        definition:
+          kind: StringEntity
+
+    # Step 7: Confirm before sending
+    - kind: SendActivity
+      id: confirm_issuance
+      activity:
+        text:
+          - "📧 **RFP Issuance Summary — Please Confirm**\n\n• **RFP:** {Topic.RFPReference}\n• **Partners:** {Topic.PartnerCount} recipients\n• **Submission Deadline:** {Topic.SubmissionDeadline}\n• **Q&A Deadline:** {Topic.QADeadline}\n• **Contact:** {Topic.ContactPerson}\n\n⚠️ This will send the RFP email to all listed partners. Proceed?"
+
+    - kind: Question
+      id: ask_confirm
+      interruptionPolicy:
+        allowInterruption: true
+      variable: init:Topic.Confirmed
+      prompt: "Type **Yes** to send or **No** to cancel."
+      entity:
+        kind: EmbeddedEntity
+        definition:
+          kind: BooleanEntity
+
+    # Step 8: Branch on confirmation
+    - kind: ConditionGroup
+      id: check_confirmation
+      conditions:
+        - id: confirmed_yes
+          condition: =Topic.Confirmed = true
+          actions:
+            - kind: InvokeFlowAction
+              id: call_issue_rfp_flow
+              input:
+                binding:
+                  text: =Topic.RFPReference
+                  text_1: =Topic.PartnerList
+                  text_2: =Topic.SubmissionDeadline
+                  text_3: =Topic.QADeadline
+                  text_4: =Topic.ContactPerson
+              output:
+                binding:
+                  issuedCount: Topic.IssuedCount
+              flowId: # CONFIGURE: Paste your "RFP Issuance — Send to Partners" flow ID here
+
+            - kind: SendActivity
+              id: success_message
+              activity:
+                text:
+                  - "✅ **RFP Issued Successfully!**\n\n• **RFP:** {Topic.RFPReference}\n• **Emails sent:** {Topic.IssuedCount}\n• **Tracking:** Active in SharePoint\n\nI'll monitor responses and send reminders automatically. Say **\"Check Status\"** anytime to see progress."
+
+      elseActions:
+        - kind: SendActivity
+          id: cancelled_message
+          activity:
+            text:
+              - "Issuance cancelled. No emails were sent. Say **\"Issue RFP\"** when you're ready to try again."

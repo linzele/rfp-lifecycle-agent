@@ -1,0 +1,20 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    displayName: Greeting
+    includeInOnSelectIntent: false
+    triggerQueries:
+      - Hello
+      - Hi
+      - Start
+      - Help me issue an RFP
+      - I need to send an RFP
+      - RFP Issuer
+  actions:
+    - kind: SendActivity
+      id: greeting_message
+      activity:
+        text:
+          - "👋 Welcome to the **Kuok Group RFP Issuer Agent**!\n\nI can help you:\n\n• **Issue an RFP** to invited partners via email\n• **Check RFP status** and partner response tracking\n• **Send reminders** to partners with pending responses\n\nSay **\"Issue RFP\"** to distribute an RFP, or **\"Check Status\"** to review tracking."

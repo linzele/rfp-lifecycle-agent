@@ -31,38 +31,54 @@ Kuok Group's IT team needs a repeatable, AI-powered solution to:
 
 ```
 kuok-rfp-agent/
-├── README.md                          # This file
+├── README.md
 ├── agents/
-│   ├── rfp-creator/                   # RFP Creation Agent (instructions + config)
-│   │   └── instructions.md
-│   ├── rfp-evaluator/                 # RFP Evaluation Agent (instructions + config)
-│   │   └── instructions.md
-│   └── rfp-issuer/                    # RFP Issuance Agent (instructions + config)
-│       └── instructions.md
+│   ├── rfp-creator/
+│   │   ├── instructions.md            # Agent system instructions
+│   │   └── topics/                    # ⬅ NEW: Copilot Studio topic YAML
+│   │       ├── greeting.yaml
+│   │       ├── create-rfp.yaml
+│   │       └── fallback.yaml
+│   ├── rfp-evaluator/
+│   │   ├── instructions.md
+│   │   └── topics/
+│   │       ├── greeting.yaml
+│   │       ├── evaluate-responses.yaml
+│   │       ├── generate-report.yaml
+│   │       └── fallback.yaml
+│   └── rfp-issuer/
+│       ├── instructions.md
+│       └── topics/
+│           ├── greeting.yaml
+│           ├── issue-rfp.yaml
+│           ├── check-status.yaml
+│           └── fallback.yaml
 ├── templates/
-│   ├── turnkey-project/               # RFP template for turnkey projects
-│   │   └── rfp-template.md
-│   ├── managed-services/              # RFP template for managed services
-│   │   └── rfp-template.md
-│   └── augmented-resources/           # RFP template for augmented resources
-│       └── rfp-template.md
+│   ├── turnkey-project/rfp-template.md
+│   ├── managed-services/rfp-template.md
+│   └── augmented-resources/rfp-template.md
 ├── knowledge-base/
-│   ├── sample-rfps/                   # Sample RFP documents for knowledge base
-│   │   └── README.md
-│   ├── evaluation-guidelines/         # Scoring criteria and evaluation rules
-│   │   └── evaluation-framework.md
-│   └── standard-terms/               # Standard terms by engagement type
-│       └── standard-terms.md
+│   ├── sample-rfps/README.md
+│   ├── evaluation-guidelines/evaluation-framework.md
+│   └── standard-terms/standard-terms.md
 ├── flows/
-│   └── flow-definitions.md           # Power Automate flow specifications
+│   ├── flow-definitions.md            # Flow specifications (human-readable)
+│   └── power-automate/               # ⬅ NEW: Importable flow JSON
+│       ├── README.md                  # Import guide
+│       ├── flow-01-rfp-creation.json
+│       ├── flow-02-rfp-issuance.json
+│       ├── flow-03-response-collection.json
+│       ├── flow-04-deadline-reminder.json
+│       ├── flow-05-evaluation-report.json
+│       └── flow-06-post-deadline-summary.json
+├── solution/
+│   └── IMPORT-GUIDE.md               # ⬅ NEW: End-to-end import guide
 ├── deployment/
-│   ├── README.md                      # Step-by-step deployment guide
-│   ├── solution/                      # Copilot Studio solution package
-│   ├── data/                          # Sample data for testing
-│   └── images/                        # Architecture diagrams
+│   ├── README.md
+│   └── images/solution-architecture.svg
 ├── docs/
-│   ├── user-guide.md                  # End-user guide
-│   └── customization-guide.md        # How to extend and customize
+│   ├── user-guide.md
+│   └── customization-guide.md
 ├── .gitignore
 ├── LICENSE
 └── CONTRIBUTING.md
@@ -117,12 +133,20 @@ Evaluates partner responses against defined criteria using deep reasoning and ge
 ### Deployment Steps
 
 1. **SharePoint Setup** — Create site and document libraries ([details](deployment/README.md#step-1-sharepoint-setup))
-2. **Copilot Agent Import** — Import solution package into Power Platform ([details](deployment/README.md#step-2-copilot-agent-setup))
-3. **Knowledge Base Setup** — Upload standard terms, templates, and evaluation guidelines ([details](deployment/README.md#step-3-knowledge-base))
-4. **Power Automate Flows** — Configure email triggers, document generation, and evaluation flows ([details](deployment/README.md#step-4-power-automate-flows))
+2. **Import Topic YAML** — Paste topic YAML into Copilot Studio agents ([guide](solution/IMPORT-GUIDE.md))
+3. **Import Flow JSON** — Import Power Automate flows and configure connections ([guide](flows/power-automate/README.md))
+4. **Knowledge Base Setup** — Upload standard terms, templates, and evaluation guidelines ([details](deployment/README.md#step-3-knowledge-base))
 5. **Teams Channel** — Set up the Deal Room channel and publish the agents ([details](deployment/README.md#step-5-teams-setup))
 
-See the full [Deployment Guide](deployment/README.md) for detailed instructions.
+### Importable Artifacts (New ✨)
+
+| Artifact | Format | Location | How to Use |
+|----------|--------|----------|------------|
+| Agent Topics | YAML | `agents/*/topics/*.yaml` | Paste into Copilot Studio Code Editor |
+| Power Automate Flows | JSON | `flows/power-automate/*.json` | Import via Power Automate portal or paste into Code View |
+| Import Guide | Markdown | `solution/IMPORT-GUIDE.md` | Step-by-step setup instructions |
+
+See the full [Deployment Guide](deployment/README.md) and [Import Guide](solution/IMPORT-GUIDE.md) for detailed instructions.
 
 ---
 

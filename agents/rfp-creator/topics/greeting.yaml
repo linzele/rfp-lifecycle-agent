@@ -1,0 +1,20 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    displayName: Greeting
+    includeInOnSelectIntent: false
+    triggerQueries:
+      - Hello
+      - Hi
+      - Start
+      - Help me create an RFP
+      - I need to create a new RFP
+      - RFP Creator
+  actions:
+    - kind: SendActivity
+      id: greeting_message
+      activity:
+        text:
+          - "👋 Welcome to the **Kuok Group RFP Creator Agent**!\n\nI can help you create a professional RFP for any of these engagement types:\n\n• **Turnkey Project** — End-to-end project delivery\n• **Managed Services** — Ongoing service operations with SLAs\n• **Augmented Resources** — Staff augmentation and team extension\n\nSay **\"Create RFP\"** to get started, or ask me anything about the RFP process."

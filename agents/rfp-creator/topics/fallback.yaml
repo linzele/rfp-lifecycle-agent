@@ -1,0 +1,19 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnUnknownIntent
+  id: main
+  actions:
+    - kind: SearchAndSummarizeContent
+      id: search_knowledge
+      userMessage: =System.Activity.Text
+      moderationLevel: Medium
+      responseSources:
+        - kind: SearchKnowledgeSources
+      additionalInstructions: >
+        You are the Kuok Group RFP Creator Agent. Answer questions about:
+        - RFP creation process and best practices
+        - Engagement types (Turnkey, Managed Services, Augmented Resources)
+        - Standard terms and evaluation criteria
+        - Template requirements and checklists
+        If the user wants to create an RFP, guide them to say "Create RFP".
+        Always respond in a professional, helpful tone.

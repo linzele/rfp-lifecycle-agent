@@ -1,0 +1,120 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "metadata": {
+    "name": "Post-Deadline Summary",
+    "description": "Triggers after the submission deadline passes. Compiles a summary of responses received vs pending and posts to Teams.",
+    "category": "KuokRFPLifecycle"
+  },
+  "connectionReferences": {
+    "shared_sharepointonline": {
+      "runtimeSource": "embedded",
+      "connection": { "connectionReferenceLogicalName": "kg_sharepoint_connection" },
+      "api": { "name": "shared_sharepointonline" }
+    },
+    "shared_teams": {
+      "runtimeSource": "embedded",
+      "connection": { "connectionReferenceLogicalName": "kg_teams_connection" },
+      "api": { "name": "shared_teams" }
+    }
+  },
+  "definition": {
+    "contentVersion": "1.0.0.0",
+    "triggers": {
+      "Recurrence_Daily_Check": {
+        "type": "Recurrence",
+        "recurrence": {
+          "frequency": "Day",
+          "interval": 1,
+          "startTime": "2026-01-01T10:00:00",
+          "timeZone": "Singapore Standard Time"
+        }
+      }
+    },
+    "actions": {
+      "Get_RFPs_Past_Deadline": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "CONFIGURE_SHAREPOINT_SITE_URL",
+            "table": "RFP Tracking",
+            "$filter": "Status eq 'Issued' and SubmissionDeadline lt '@{formatDateTime(utcNow(), 'yyyy-MM-ddTHH:mm:ssZ')}'"
+          }
+        },
+        "runAfter": {}
+      },
+      "For_Each_Past_Deadline_RFP": {
+        "type": "Foreach",
+        "foreach": "@body('Get_RFPs_Past_Deadline')?['value']",
+        "actions": {
+          "Get_All_Partners_For_RFP": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "shared_sharepointonline",
+                "operationId": "GetItems",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+              },
+              "parameters": {
+                "dataset": "CONFIGURE_SHAREPOINT_SITE_URL",
+                "table": "Partner Tracking",
+                "$filter": "RFPReference eq '@{items('For_Each_Past_Deadline_RFP')?['Title']}'"
+              }
+            }
+          },
+          "Count_Responses": {
+            "type": "Compose",
+            "inputs": {
+              "total": "@length(body('Get_All_Partners_For_RFP')?['value'])",
+              "received": "@length(filter(body('Get_All_Partners_For_RFP')?['value'], item(), 'ResponseReceived', true))",
+              "pending": "@sub(length(body('Get_All_Partners_For_RFP')?['value']), length(filter(body('Get_All_Partners_For_RFP')?['value'], item(), 'ResponseReceived', true)))"
+            },
+            "runAfter": { "Get_All_Partners_For_RFP": ["Succeeded"] }
+          },
+          "Update_Status_To_Collecting": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "shared_sharepointonline",
+                "operationId": "PatchItem",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+              },
+              "parameters": {
+                "dataset": "CONFIGURE_SHAREPOINT_SITE_URL",
+                "table": "RFP Tracking",
+                "id": "@{items('For_Each_Past_Deadline_RFP')?['ID']}",
+                "item": {
+                  "Status": "Collecting"
+                }
+              }
+            },
+            "runAfter": { "Count_Responses": ["Succeeded"] }
+          },
+          "Post_Deadline_Summary_Card": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "shared_teams",
+                "operationId": "PostCardToConversation",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_teams"
+              },
+              "parameters": {
+                "poster": "Flow bot",
+                "location": "Channel",
+                "body/recipient": "CONFIGURE_TEAMS_CHANNEL_ID",
+                "body/messageBody": "🔔 **Submission Deadline Passed: @{items('For_Each_Past_Deadline_RFP')?['Title']}**\n\n**Deadline was:** @{items('For_Each_Past_Deadline_RFP')?['SubmissionDeadline']}\n\n📊 **Response Summary:**\n• **Total partners invited:** @{outputs('Count_Responses')?['total']}\n• **Responses received:** @{outputs('Count_Responses')?['received']} ✅\n• **Responses pending:** @{outputs('Count_Responses')?['pending']} ⚠️\n\n@{if(equals(outputs('Count_Responses')?['pending'], 0), '✅ All responses received! Ready for evaluation.', '⚠️ Some responses are still pending. Contact the RFP owner for next steps.')}"
+              }
+            },
+            "runAfter": { "Update_Status_To_Collecting": ["Succeeded"] }
+          }
+        },
+        "runAfter": { "Get_RFPs_Past_Deadline": ["Succeeded"] }
+      }
+    }
+  },
+  "schemaVersion": "1.0.0.0"
+}

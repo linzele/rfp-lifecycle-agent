@@ -1,0 +1,176 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "metadata": {
+    "name": "Response Collection — Monitor Incoming Emails",
+    "description": "Automatically monitors incoming emails for RFP responses, saves attachments to SharePoint, and updates the partner tracking list.",
+    "category": "KuokRFPLifecycle"
+  },
+  "connectionReferences": {
+    "shared_office365": {
+      "runtimeSource": "embedded",
+      "connection": { "connectionReferenceLogicalName": "kg_outlook_connection" },
+      "api": { "name": "shared_office365" }
+    },
+    "shared_sharepointonline": {
+      "runtimeSource": "embedded",
+      "connection": { "connectionReferenceLogicalName": "kg_sharepoint_connection" },
+      "api": { "name": "shared_sharepointonline" }
+    },
+    "shared_teams": {
+      "runtimeSource": "embedded",
+      "connection": { "connectionReferenceLogicalName": "kg_teams_connection" },
+      "api": { "name": "shared_teams" }
+    }
+  },
+  "definition": {
+    "contentVersion": "1.0.0.0",
+    "triggers": {
+      "When_a_new_email_arrives_V3": {
+        "type": "OpenApiConnectionNotification",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_office365",
+            "operationId": "OnNewEmailV3",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+          },
+          "parameters": {
+            "subjectFilter": "KG-RFP-",
+            "hasAttachments": true,
+            "importance": "Any",
+            "folderPath": "Inbox"
+          }
+        }
+      }
+    },
+    "actions": {
+      "Extract_RFP_Reference": {
+        "type": "Compose",
+        "inputs": "@first(split(last(split(triggerOutputs()?['body/subject'], 'KG-RFP-')), ' '))",
+        "runAfter": {},
+        "description": "Extracts the RFP reference number from the email subject line"
+      },
+      "Set_RFP_Reference": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [{
+            "name": "rfpReference",
+            "type": "string",
+            "value": "KG-RFP-@{outputs('Extract_RFP_Reference')}"
+          }]
+        },
+        "runAfter": { "Extract_RFP_Reference": ["Succeeded"] }
+      },
+      "Get_Sender_Email": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [{
+            "name": "senderEmail",
+            "type": "string",
+            "value": "@triggerOutputs()?['body/from']"
+          }]
+        },
+        "runAfter": { "Set_RFP_Reference": ["Succeeded"] }
+      },
+      "Lookup_Partner": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "CONFIGURE_SHAREPOINT_SITE_URL",
+            "table": "Partner Tracking",
+            "$filter": "Email eq '@{variables('senderEmail')}' and RFPReference eq '@{variables('rfpReference')}'"
+          }
+        },
+        "runAfter": { "Get_Sender_Email": ["Succeeded"] }
+      },
+      "Condition_Partner_Found": {
+        "type": "If",
+        "expression": {
+          "and": [
+            { "greater": ["@length(body('Lookup_Partner')?['value'])", 0] }
+          ]
+        },
+        "actions": {
+          "Get_Partner_Company": {
+            "type": "Compose",
+            "inputs": "@first(body('Lookup_Partner')?['value'])?['CompanyName']"
+          },
+          "For_Each_Attachment": {
+            "type": "Foreach",
+            "foreach": "@triggerOutputs()?['body/attachments']",
+            "actions": {
+              "Save_Attachment_To_SharePoint": {
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "CreateFile",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                  },
+                  "parameters": {
+                    "dataset": "CONFIGURE_SHAREPOINT_SITE_URL",
+                    "folderPath": "/Partner Responses/@{variables('rfpReference')}/@{outputs('Get_Partner_Company')}",
+                    "name": "@{items('For_Each_Attachment')?['name']}",
+                    "body": "@base64ToBinary(items('For_Each_Attachment')?['contentBytes'])"
+                  }
+                }
+              }
+            },
+            "runAfter": { "Get_Partner_Company": ["Succeeded"] }
+          },
+          "Update_Partner_Tracking": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "shared_sharepointonline",
+                "operationId": "PatchItem",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+              },
+              "parameters": {
+                "dataset": "CONFIGURE_SHAREPOINT_SITE_URL",
+                "table": "Partner Tracking",
+                "id": "@{first(body('Lookup_Partner')?['value'])?['ID']}",
+                "item": {
+                  "ResponseReceived": true,
+                  "ResponseDate": "@{utcNow()}"
+                }
+              }
+            },
+            "runAfter": { "For_Each_Attachment": ["Succeeded"] }
+          },
+          "Post_Response_Notification": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "shared_teams",
+                "operationId": "PostCardToConversation",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_teams"
+              },
+              "parameters": {
+                "poster": "Flow bot",
+                "location": "Channel",
+                "body/recipient": "CONFIGURE_TEAMS_CHANNEL_ID",
+                "body/messageBody": "📩 **Response Received!**\n\n**RFP:** @{variables('rfpReference')}\n**Partner:** @{outputs('Get_Partner_Company')}\n**Received:** @{utcNow()}\n**Attachments:** @{length(triggerOutputs()?['body/attachments'])} files saved to SharePoint"
+              }
+            },
+            "runAfter": { "Update_Partner_Tracking": ["Succeeded"] }
+          }
+        },
+        "else": {
+          "actions": {
+            "Log_Unknown_Sender": {
+              "type": "Compose",
+              "inputs": "Unknown sender @{variables('senderEmail')} for RFP @{variables('rfpReference')}"
+            }
+          }
+        },
+        "runAfter": { "Lookup_Partner": ["Succeeded"] }
+      }
+    }
+  },
+  "schemaVersion": "1.0.0.0"
+}

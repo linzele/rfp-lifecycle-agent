@@ -1,0 +1,197 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "metadata": {
+    "name": "RFP Issuance — Send to Partners",
+    "description": "Receives partner list and RFP document from Copilot Studio, sends RFP emails to each partner with the document attached, and logs issuance in the tracking list.",
+    "category": "KuokRFPLifecycle"
+  },
+  "connectionReferences": {
+    "shared_sharepointonline": {
+      "runtimeSource": "embedded",
+      "connection": { "connectionReferenceLogicalName": "kg_sharepoint_connection" },
+      "api": { "name": "shared_sharepointonline" }
+    },
+    "shared_office365": {
+      "runtimeSource": "embedded",
+      "connection": { "connectionReferenceLogicalName": "kg_outlook_connection" },
+      "api": { "name": "shared_office365" }
+    },
+    "shared_teams": {
+      "runtimeSource": "embedded",
+      "connection": { "connectionReferenceLogicalName": "kg_teams_connection" },
+      "api": { "name": "shared_teams" }
+    }
+  },
+  "definition": {
+    "contentVersion": "1.0.0.0",
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "PowerAppV2",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "rfpReference": { "type": "string" },
+              "rfpDocumentUrl": { "type": "string" },
+              "submissionDeadline": { "type": "string" },
+              "qaDeadline": { "type": "string" },
+              "contactPersonName": { "type": "string" },
+              "contactPersonEmail": { "type": "string" },
+              "partners": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "company": { "type": "string" },
+                    "email": { "type": "string" }
+                  }
+                }
+              }
+            },
+            "required": ["rfpReference", "rfpDocumentUrl", "partners"]
+          }
+        }
+      }
+    },
+    "actions": {
+      "Initialize_Sent_Count": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [{ "name": "sentCount", "type": "integer", "value": 0 }]
+        },
+        "runAfter": {}
+      },
+      "Get_RFP_Document": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetFileContent",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "CONFIGURE_SHAREPOINT_SITE_URL",
+            "id": "@triggerBody()['rfpDocumentUrl']"
+          }
+        },
+        "runAfter": { "Initialize_Sent_Count": ["Succeeded"] }
+      },
+      "For_Each_Partner": {
+        "type": "Foreach",
+        "foreach": "@triggerBody()['partners']",
+        "actions": {
+          "Send_RFP_Email": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "shared_office365",
+                "operationId": "SendEmailV2",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+              },
+              "parameters": {
+                "emailMessage/To": "@items('For_Each_Partner')['email']",
+                "emailMessage/Subject": "RFP: @{triggerBody()['rfpReference']} — @{items('For_Each_Partner')['company']}",
+                "emailMessage/Body": "<html><body><p>Dear @{items('For_Each_Partner')['name']},</p><p>Kuok Group IT is pleased to invite <strong>@{items('For_Each_Partner')['company']}</strong> to respond to the attached Request for Proposal.</p><p><strong>RFP Reference:</strong> @{triggerBody()['rfpReference']}<br/><strong>Submission Deadline:</strong> @{triggerBody()['submissionDeadline']}<br/><strong>Q&A Deadline:</strong> @{triggerBody()['qaDeadline']}</p><p>Please direct all questions to @{triggerBody()['contactPersonName']} at <a href='mailto:@{triggerBody()['contactPersonEmail']}'>@{triggerBody()['contactPersonEmail']}</a>.</p><p>We look forward to your response.</p><p>Best regards,<br/>Kuok Group IT</p></body></html>",
+                "emailMessage/Attachments": [
+                  {
+                    "Name": "@{triggerBody()['rfpReference']}-RFP.docx",
+                    "ContentBytes": "@body('Get_RFP_Document')"
+                  }
+                ],
+                "emailMessage/Importance": "High"
+              }
+            }
+          },
+          "Create_Partner_Tracking_Entry": {
+            "type": "OpenApiConnection",
+            "inputs": {
+              "host": {
+                "connectionName": "shared_sharepointonline",
+                "operationId": "PostItem",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+              },
+              "parameters": {
+                "dataset": "CONFIGURE_SHAREPOINT_SITE_URL",
+                "table": "Partner Tracking",
+                "item": {
+                  "Title": "@{items('For_Each_Partner')['company']}",
+                  "RFPReference": "@{triggerBody()['rfpReference']}",
+                  "PartnerName": "@{items('For_Each_Partner')['name']}",
+                  "CompanyName": "@{items('For_Each_Partner')['company']}",
+                  "Email": "@{items('For_Each_Partner')['email']}",
+                  "EmailSent": "@{utcNow()}",
+                  "ResponseReceived": false,
+                  "RemindersSent": 0
+                }
+              }
+            },
+            "runAfter": { "Send_RFP_Email": ["Succeeded"] }
+          },
+          "Increment_Sent_Count": {
+            "type": "IncrementVariable",
+            "inputs": { "name": "sentCount", "value": 1 },
+            "runAfter": { "Create_Partner_Tracking_Entry": ["Succeeded"] }
+          }
+        },
+        "runAfter": { "Get_RFP_Document": ["Succeeded"] }
+      },
+      "Update_RFP_Status_to_Issued": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "PatchItem",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "CONFIGURE_SHAREPOINT_SITE_URL",
+            "table": "RFP Tracking",
+            "id": "CONFIGURE_LOOKUP_BY_RFP_REFERENCE",
+            "item": {
+              "Status": "Issued",
+              "IssuedDate": "@{utcNow()}"
+            }
+          }
+        },
+        "runAfter": { "For_Each_Partner": ["Succeeded"] }
+      },
+      "Post_Teams_Summary": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_teams",
+            "operationId": "PostCardToConversation",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_teams"
+          },
+          "parameters": {
+            "poster": "Flow bot",
+            "location": "Channel",
+            "body/recipient": "CONFIGURE_TEAMS_CHANNEL_ID",
+            "body/messageBody": "📧 **RFP Issued:** @{triggerBody()['rfpReference']}\n\n**Partners emailed:** @{variables('sentCount')}\n**Deadline:** @{triggerBody()['submissionDeadline']}\n**Contact:** @{triggerBody()['contactPersonName']}"
+          }
+        },
+        "runAfter": { "Update_RFP_Status_to_Issued": ["Succeeded"] }
+      },
+      "Respond_to_Copilot_Studio": {
+        "type": "Response",
+        "kind": "PowerApp",
+        "inputs": {
+          "statusCode": 200,
+          "body": {
+            "issuedCount": "@{variables('sentCount')}"
+          },
+          "schema": {
+            "type": "object",
+            "properties": {
+              "issuedCount": { "type": "integer" }
+            }
+          }
+        },
+        "runAfter": { "Post_Teams_Summary": ["Succeeded"] }
+      }
+    }
+  },
+  "schemaVersion": "1.0.0.0"
+}

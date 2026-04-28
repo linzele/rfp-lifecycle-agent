@@ -1,0 +1,50 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    displayName: Check RFP Status
+    includeInOnSelectIntent: true
+    triggerQueries:
+      - Check status
+      - RFP status
+      - How many responses
+      - Partner responses
+      - Track RFP
+      - What's the status
+      - Show me the tracking
+  actions:
+    # Step 1: Ask for RFP Reference
+    - kind: Question
+      id: ask_rfp_reference
+      interruptionPolicy:
+        allowInterruption: true
+      variable: init:Topic.RFPReference
+      prompt: "Which **RFP Reference** would you like to check (e.g., KG-RFP-2026-001)?"
+      entity:
+        kind: EmbeddedEntity
+        definition:
+          kind: StringEntity
+
+    # Step 2: Call flow to retrieve status
+    - kind: InvokeFlowAction
+      id: call_status_flow
+      input:
+        binding:
+          text: =Topic.RFPReference
+      output:
+        binding:
+          status: Topic.RFPStatus
+          totalPartners: Topic.TotalPartners
+          responsesReceived: Topic.ResponsesReceived
+          responsesPending: Topic.ResponsesPending
+          deadline: Topic.Deadline
+          partnerDetails: Topic.PartnerDetails
+      flowId: # CONFIGURE: Paste your "RFP Status Check" flow ID here
+
+    # Step 3: Display status
+    - kind: SendActivity
+      id: status_message
+      activity:
+        text:
+          - "📊 **RFP Status: {Topic.RFPReference}**\n\n• **Status:** {Topic.RFPStatus}\n• **Deadline:** {Topic.Deadline}\n• **Responses:** {Topic.ResponsesReceived} / {Topic.TotalPartners}\n• **Pending:** {Topic.ResponsesPending}\n\n**Partner Details:**\n{Topic.PartnerDetails}\n\nWould you like me to **send reminders** to partners who haven't responded?"

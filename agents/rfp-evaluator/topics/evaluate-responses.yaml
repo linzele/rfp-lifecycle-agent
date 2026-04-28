@@ -1,0 +1,99 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    displayName: Evaluate Responses
+    includeInOnSelectIntent: true
+    triggerQueries:
+      - Evaluate responses
+      - Evaluate RFP
+      - Score responses
+      - Compare proposals
+      - Start evaluation
+      - Assess partner responses
+      - Review submissions
+  actions:
+    # Step 1: Ask for RFP Reference
+    - kind: Question
+      id: ask_rfp_reference
+      interruptionPolicy:
+        allowInterruption: true
+      variable: init:Topic.RFPReference
+      prompt: "Which **RFP Reference** would you like to evaluate (e.g., KG-RFP-2026-001)?"
+      entity:
+        kind: EmbeddedEntity
+        definition:
+          kind: StringEntity
+
+    # Step 2: Retrieve responses from SharePoint
+    - kind: InvokeFlowAction
+      id: call_retrieve_responses
+      input:
+        binding:
+          text: =Topic.RFPReference
+      output:
+        binding:
+          partnerCount: Topic.PartnerCount
+          partnerList: Topic.PartnerList
+          engagementType: Topic.EngagementType
+      flowId: # CONFIGURE: Paste your "Retrieve RFP Responses" flow ID here
+
+    - kind: SendActivity
+      id: show_responses
+      activity:
+        text:
+          - "📂 **Found {Topic.PartnerCount} responses for {Topic.RFPReference}**\n\n**Partners:**\n{Topic.PartnerList}\n\n**Engagement Type:** {Topic.EngagementType}\n\nI'll now evaluate each response against the standard criteria. This includes:\n\n1️⃣ Compliance check against mandatory requirements\n2️⃣ Technical capability scoring (1–5 scale)\n3️⃣ Commercial comparison\n4️⃣ Risk assessment\n\nShall I proceed with the full evaluation?"
+
+    - kind: Question
+      id: ask_confirm_eval
+      interruptionPolicy:
+        allowInterruption: true
+      variable: init:Topic.Confirmed
+      prompt: "Type **Yes** to start evaluation or **No** to cancel."
+      entity:
+        kind: EmbeddedEntity
+        definition:
+          kind: BooleanEntity
+
+    - kind: ConditionGroup
+      id: check_confirmation
+      conditions:
+        - id: confirmed_yes
+          condition: =Topic.Confirmed = true
+          actions:
+            # Step 3: AI-powered evaluation using knowledge sources
+            - kind: SearchAndSummarizeContent
+              id: evaluate_with_ai
+              userMessage: >
+                Evaluate the RFP responses for {Topic.RFPReference} ({Topic.EngagementType}).
+                For each partner, assess:
+                1. Compliance with mandatory requirements (Pass/Fail)
+                2. Technical capability (score 1-5 with justification)
+                3. Team composition and experience
+                4. Methodology and approach
+                5. Commercial competitiveness
+                6. Risk factors
+                Produce a structured comparison matrix.
+              moderationLevel: Medium
+              responseSources:
+                - kind: SearchKnowledgeSources
+              additionalInstructions: >
+                Use the evaluation framework from the knowledge base.
+                Score each criterion on a 1-5 scale:
+                5 = Exceptional, 4 = Strong, 3 = Adequate, 2 = Marginal, 1 = Non-compliant.
+                Apply engagement-type-specific weightings.
+                Flag any compliance failures as automatic disqualifiers.
+
+            - kind: SendActivity
+              id: eval_complete
+              activity:
+                text:
+                  - "✅ **Evaluation Complete for {Topic.RFPReference}**\n\nThe AI-assisted evaluation has been generated above. Would you like me to:\n\n• **Generate a formal report** → Say \"Generate Report\"\n• **Adjust scoring weights** → Tell me which criteria to change\n• **Add team feedback** → Provide your additional comments"
+
+      elseActions:
+        - kind: SendActivity
+          id: cancelled_message
+          activity:
+            text:
+              - "Evaluation cancelled. Say **\"Evaluate Responses\"** when you're ready."

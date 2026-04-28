@@ -1,0 +1,206 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "metadata": {
+    "name": "RFP Creation — Populate Template",
+    "description": "Receives structured RFP data from Copilot Studio, selects the correct Word template from SharePoint based on engagement type, populates it, and saves the generated document.",
+    "category": "KuokRFPLifecycle"
+  },
+  "connectionReferences": {
+    "shared_sharepointonline": {
+      "runtimeSource": "embedded",
+      "connection": { "connectionReferenceLogicalName": "kg_sharepoint_connection" },
+      "api": { "name": "shared_sharepointonline" }
+    },
+    "shared_teams": {
+      "runtimeSource": "embedded",
+      "connection": { "connectionReferenceLogicalName": "kg_teams_connection" },
+      "api": { "name": "shared_teams" }
+    },
+    "shared_wordonlinebusiness": {
+      "runtimeSource": "embedded",
+      "connection": { "connectionReferenceLogicalName": "kg_word_connection" },
+      "api": { "name": "shared_wordonlinebusiness" }
+    }
+  },
+  "definition": {
+    "contentVersion": "1.0.0.0",
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "PowerAppV2",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "rfpReference": { "type": "string", "title": "RFP Reference" },
+              "engagementType": { "type": "string", "title": "Engagement Type", "enum": ["Turnkey", "ManagedServices", "AugmentedResources"] },
+              "projectName": { "type": "string", "title": "Project Name" },
+              "projectDescription": { "type": "string", "title": "Project Description" },
+              "budgetRange": { "type": "string", "title": "Budget Range" },
+              "timeline": { "type": "string", "title": "Timeline" },
+              "submissionDeadline": { "type": "string", "title": "Submission Deadline" }
+            },
+            "required": ["rfpReference", "engagementType", "projectName"]
+          }
+        }
+      }
+    },
+    "actions": {
+      "Initialize_RFP_Reference": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "rfpReference",
+              "type": "string",
+              "value": "@triggerBody()['rfpReference']"
+            }
+          ]
+        },
+        "runAfter": {}
+      },
+      "Switch_Engagement_Type": {
+        "type": "Switch",
+        "expression": "@triggerBody()['engagementType']",
+        "cases": {
+          "Turnkey": {
+            "case": "Turnkey",
+            "actions": {
+              "Set_Template_Path_Turnkey": {
+                "type": "SetVariable",
+                "inputs": {
+                  "name": "templatePath",
+                  "value": "/RFP Templates/Turnkey Project/rfp-template.docx"
+                }
+              }
+            }
+          },
+          "ManagedServices": {
+            "case": "ManagedServices",
+            "actions": {
+              "Set_Template_Path_Managed": {
+                "type": "SetVariable",
+                "inputs": {
+                  "name": "templatePath",
+                  "value": "/RFP Templates/Managed Services/rfp-template.docx"
+                }
+              }
+            }
+          },
+          "AugmentedResources": {
+            "case": "AugmentedResources",
+            "actions": {
+              "Set_Template_Path_Augmented": {
+                "type": "SetVariable",
+                "inputs": {
+                  "name": "templatePath",
+                  "value": "/RFP Templates/Augmented Resources/rfp-template.docx"
+                }
+              }
+            }
+          }
+        },
+        "default": { "actions": {} },
+        "runAfter": { "Initialize_RFP_Reference": ["Succeeded"] }
+      },
+      "Populate_Word_Template": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_wordonlinebusiness",
+            "operationId": "PopulateAWordTemplate",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_wordonlinebusiness"
+          },
+          "parameters": {
+            "source": "CONFIGURE_SHAREPOINT_SITE_URL",
+            "documentLibrary": "CONFIGURE_DOCUMENT_LIBRARY_ID",
+            "file": "@variables('templatePath')",
+            "rfpReference": "@variables('rfpReference')",
+            "projectName": "@triggerBody()['projectName']",
+            "projectDescription": "@triggerBody()['projectDescription']",
+            "budgetRange": "@triggerBody()['budgetRange']",
+            "timeline": "@triggerBody()['timeline']",
+            "submissionDeadline": "@triggerBody()['submissionDeadline']"
+          }
+        },
+        "runAfter": { "Switch_Engagement_Type": ["Succeeded"] }
+      },
+      "Create_File_In_SharePoint": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "CreateFile",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "CONFIGURE_SHAREPOINT_SITE_URL",
+            "folderPath": "/Issued RFPs/@{variables('rfpReference')}",
+            "name": "@{variables('rfpReference')}-RFP.docx",
+            "body": "@body('Populate_Word_Template')?['Microsoft.PowerApps.CDS.FileBody']"
+          }
+        },
+        "runAfter": { "Populate_Word_Template": ["Succeeded"] }
+      },
+      "Create_Tracking_Item": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "PostItem",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "CONFIGURE_SHAREPOINT_SITE_URL",
+            "table": "RFP Tracking",
+            "item": {
+              "Title": "@{variables('rfpReference')}",
+              "ProjectName": "@triggerBody()['projectName']",
+              "EngagementType": "@triggerBody()['engagementType']",
+              "Status": "Draft",
+              "SubmissionDeadline": "@triggerBody()['submissionDeadline']"
+            }
+          }
+        },
+        "runAfter": { "Create_File_In_SharePoint": ["Succeeded"] }
+      },
+      "Post_Teams_Notification": {
+        "type": "OpenApiConnection",
+        "inputs": {
+          "host": {
+            "connectionName": "shared_teams",
+            "operationId": "PostCardToConversation",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_teams"
+          },
+          "parameters": {
+            "poster": "Flow bot",
+            "location": "Channel",
+            "body/recipient": "CONFIGURE_TEAMS_CHANNEL_ID",
+            "body/messageBody": "📄 **New RFP Created:** @{variables('rfpReference')}\n\n**Project:** @{triggerBody()['projectName']}\n**Type:** @{triggerBody()['engagementType']}\n**Deadline:** @{triggerBody()['submissionDeadline']}\n\n[Open Document](@{body('Create_File_In_SharePoint')?['Path']})"
+          }
+        },
+        "runAfter": { "Create_Tracking_Item": ["Succeeded"] }
+      },
+      "Respond_to_Copilot_Studio": {
+        "type": "Response",
+        "kind": "PowerApp",
+        "inputs": {
+          "statusCode": 200,
+          "body": {
+            "rfpReference": "@{variables('rfpReference')}",
+            "documentUrl": "@{body('Create_File_In_SharePoint')?['Path']}"
+          },
+          "schema": {
+            "type": "object",
+            "properties": {
+              "rfpReference": { "type": "string" },
+              "documentUrl": { "type": "string" }
+            }
+          }
+        },
+        "runAfter": { "Post_Teams_Notification": ["Succeeded"] }
+      }
+    }
+  },
+  "schemaVersion": "1.0.0.0"
+}
