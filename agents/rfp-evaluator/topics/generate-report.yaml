@@ -39,7 +39,7 @@ beginDialog:
       interruptionPolicy:
         allowInterruption: true
       variable: init:Topic.AdditionalComments
-      prompt: "Any **additional comments** or caveats to include in the report? (Type \"None\" to skip)"
+      prompt: "Any **additional comments** or caveats to include in the report? (Type 'None' to skip)"
       entity:
         kind: StringPrebuiltEntity
 

@@ -128,11 +128,11 @@ beginDialog:
               id: success_message
               activity:
                 text:
-                  - "✅ **RFP Generated Successfully!**\n\n• **Reference:** {Topic.RFPReference}\n• **Document:** [Open in SharePoint]({Topic.DocumentUrl})\n\nThe RFP has been saved to the SharePoint document library. You can now:\n• Say **\"Issue RFP\"** to send it to partners\n• Say **\"Edit RFP\"** to make changes"
+                  - "✅ **RFP Generated Successfully!**\n\n• **Reference:** {Topic.RFPReference}\n• **Document:** [Open in SharePoint]({Topic.DocumentUrl})\n\nThe RFP has been saved to the SharePoint document library. You can now:\n• Say **'Issue RFP'** to send it to partners\n• Say **'Edit RFP'** to make changes"
 
       elseActions:
         - kind: SendActivity
           id: cancelled_message
           activity:
             text:
-              - "No problem — let me know what you'd like to change. You can say **\"Create RFP\"** again when you're ready."
+              - "No problem — let me know what you'd like to change. You can say **'Create RFP'** again when you're ready."

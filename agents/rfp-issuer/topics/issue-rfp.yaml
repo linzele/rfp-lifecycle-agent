@@ -38,7 +38,7 @@ beginDialog:
       id: partner_instructions
       activity:
         text:
-          - "Please provide each partner's details in this format:\n\n**Name, Company, Email**\n\nFor example:\n`John Doe, Acme Corp, john@acme.com`\n\nEnter one partner per message. Type **\"Done\"** when finished."
+          - "Please provide each partner's details in this format:\n\n**Name, Company, Email**\n\nFor example:\n`John Doe, Acme Corp, john@acme.com`\n\nEnter one partner per message. Type **'Done'** when finished."
 
     - kind: Question
       id: collect_partners
@@ -120,11 +120,11 @@ beginDialog:
               id: success_message
               activity:
                 text:
-                  - "✅ **RFP Issued Successfully!**\n\n• **RFP:** {Topic.RFPReference}\n• **Emails sent:** {Topic.IssuedCount}\n• **Tracking:** Active in SharePoint\n\nI'll monitor responses and send reminders automatically. Say **\"Check Status\"** anytime to see progress."
+                  - "✅ **RFP Issued Successfully!**\n\n• **RFP:** {Topic.RFPReference}\n• **Emails sent:** {Topic.IssuedCount}\n• **Tracking:** Active in SharePoint\n\nI'll monitor responses and send reminders automatically. Say **'Check Status'** anytime to see progress."
 
       elseActions:
         - kind: SendActivity
           id: cancelled_message
           activity:
             text:
-              - "Issuance cancelled. No emails were sent. Say **\"Issue RFP\"** when you're ready to try again."
+              - "Issuance cancelled. No emails were sent. Say **'Issue RFP'** when you're ready to try again."

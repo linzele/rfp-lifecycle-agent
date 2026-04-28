@@ -85,11 +85,11 @@ beginDialog:
               id: eval_complete
               activity:
                 text:
-                  - "✅ **Evaluation Complete for {Topic.RFPReference}**\n\nThe AI-assisted evaluation has been generated above. Would you like me to:\n\n• **Generate a formal report** → Say \"Generate Report\"\n• **Adjust scoring weights** → Tell me which criteria to change\n• **Add team feedback** → Provide your additional comments"
+                  - "✅ **Evaluation Complete for {Topic.RFPReference}**\n\nThe AI-assisted evaluation has been generated above. Would you like me to:\n\n• **Generate a formal report** → Say 'Generate Report'\n• **Adjust scoring weights** → Tell me which criteria to change\n• **Add team feedback** → Provide your additional comments"
 
       elseActions:
         - kind: SendActivity
           id: cancelled_message
           activity:
             text:
-              - "Evaluation cancelled. Say **\"Evaluate Responses\"** when you're ready."
+              - "Evaluation cancelled. Say **'Evaluate Responses'** when you're ready."
