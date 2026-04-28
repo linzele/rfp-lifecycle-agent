@@ -22,8 +22,7 @@ beginDialog:
       variable: init:Topic.RFPReference
       prompt: "Which **RFP Reference** would you like to evaluate (e.g., KG-RFP-2026-001)?"
       entity:
-        kind: PrebuiltEntity
-        entityType: freeText
+        kind: StringPrebuiltEntity
 
     # Step 2: Retrieve responses from SharePoint
     - kind: InvokeFlowAction
@@ -51,8 +50,7 @@ beginDialog:
       variable: init:Topic.Confirmed
       prompt: "Type **Yes** to start evaluation or **No** to cancel."
       entity:
-        kind: PrebuiltEntity
-        entityType: boolean
+        kind: BooleanPrebuiltEntity
 
     - kind: ConditionGroup
       id: check_confirmation

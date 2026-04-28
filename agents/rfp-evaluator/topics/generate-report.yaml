@@ -21,8 +21,7 @@ beginDialog:
       variable: init:Topic.RFPReference
       prompt: "Which **RFP Reference** should the evaluation report be for?"
       entity:
-        kind: PrebuiltEntity
-        entityType: freeText
+        kind: StringPrebuiltEntity
 
     # Step 2: Ask for recommendation
     - kind: Question
@@ -32,8 +31,7 @@ beginDialog:
       variable: init:Topic.Recommendation
       prompt: "Based on the evaluation, which **partner do you recommend** (or should I recommend the highest scorer)?"
       entity:
-        kind: PrebuiltEntity
-        entityType: freeText
+        kind: StringPrebuiltEntity
 
     # Step 3: Ask for additional comments
     - kind: Question
@@ -43,8 +41,7 @@ beginDialog:
       variable: init:Topic.AdditionalComments
       prompt: "Any **additional comments** or caveats to include in the report? (Type \"None\" to skip)"
       entity:
-        kind: PrebuiltEntity
-        entityType: freeText
+        kind: StringPrebuiltEntity
 
     # Step 4: Generate the report via Power Automate
     - kind: InvokeFlowAction

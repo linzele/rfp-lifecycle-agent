@@ -23,8 +23,7 @@ beginDialog:
       variable: init:Topic.ProjectName
       prompt: "What is the **project name** for this RFP?"
       entity:
-        kind: PrebuiltEntity
-        entityType: freeText
+        kind: StringPrebuiltEntity
 
     # Step 2: Ask for Engagement Type
     - kind: Question
@@ -53,8 +52,7 @@ beginDialog:
       variable: init:Topic.ProjectDescription
       prompt: "Please provide a **brief description** of the project scope and objectives."
       entity:
-        kind: PrebuiltEntity
-        entityType: freeText
+        kind: StringPrebuiltEntity
 
     # Step 4: Ask for Budget Range
     - kind: Question
@@ -64,8 +62,7 @@ beginDialog:
       variable: init:Topic.BudgetRange
       prompt: "What is the **estimated budget range** (e.g., SGD 500K – 1M)?"
       entity:
-        kind: PrebuiltEntity
-        entityType: freeText
+        kind: StringPrebuiltEntity
 
     # Step 5: Ask for Timeline
     - kind: Question
@@ -75,8 +72,7 @@ beginDialog:
       variable: init:Topic.Timeline
       prompt: "What is the **expected project timeline** (start date and duration)?"
       entity:
-        kind: PrebuiltEntity
-        entityType: freeText
+        kind: StringPrebuiltEntity
 
     # Step 6: Ask for Submission Deadline
     - kind: Question
@@ -86,8 +82,7 @@ beginDialog:
       variable: init:Topic.SubmissionDeadline
       prompt: "What is the **RFP submission deadline** for partners?"
       entity:
-        kind: PrebuiltEntity
-        entityType: datetimeV2
+        kind: DateTimePrebuiltEntity
 
     # Step 7: Confirm details before generation
     - kind: SendActivity
@@ -103,8 +98,7 @@ beginDialog:
       variable: init:Topic.Confirmed
       prompt: "Type **Yes** to generate or **No** to make changes."
       entity:
-        kind: PrebuiltEntity
-        entityType: boolean
+        kind: BooleanPrebuiltEntity
 
     # Step 8: Branch on confirmation
     - kind: ConditionGroup

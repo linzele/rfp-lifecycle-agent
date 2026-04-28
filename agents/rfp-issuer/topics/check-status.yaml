@@ -22,8 +22,7 @@ beginDialog:
       variable: init:Topic.RFPReference
       prompt: "Which **RFP Reference** would you like to check (e.g., KG-RFP-2026-001)?"
       entity:
-        kind: PrebuiltEntity
-        entityType: freeText
+        kind: StringPrebuiltEntity
 
     # Step 2: Call flow to retrieve status
     - kind: InvokeFlowAction
