@@ -21,9 +21,8 @@ beginDialog:
       variable: init:Topic.RFPReference
       prompt: "What is the **RFP Reference number** (e.g., KG-RFP-2026-001)?"
       entity:
-        kind: EmbeddedEntity
-        definition:
-          kind: StringEntity
+        kind: PrebuiltEntity
+        entityType: freeText
 
     # Step 2: Ask for Partner Details
     - kind: Question
@@ -33,9 +32,8 @@ beginDialog:
       variable: init:Topic.PartnerCount
       prompt: "How many **partners** should receive this RFP?"
       entity:
-        kind: EmbeddedEntity
-        definition:
-          kind: NumberEntity
+        kind: PrebuiltEntity
+        entityType: number
 
     # Step 3: Collect partner details (repeat for each partner)
     - kind: SendActivity
@@ -51,9 +49,8 @@ beginDialog:
       variable: init:Topic.PartnerList
       prompt: "Enter partner details (Name, Company, Email):"
       entity:
-        kind: EmbeddedEntity
-        definition:
-          kind: StringEntity
+        kind: PrebuiltEntity
+        entityType: freeText
 
     # Step 4: Ask for Submission Deadline
     - kind: Question
@@ -63,9 +60,8 @@ beginDialog:
       variable: init:Topic.SubmissionDeadline
       prompt: "What is the **submission deadline** for partner responses?"
       entity:
-        kind: EmbeddedEntity
-        definition:
-          kind: DateTimeEntity
+        kind: PrebuiltEntity
+        entityType: datetimeV2
 
     # Step 5: Ask for Q&A Deadline
     - kind: Question
@@ -75,9 +71,8 @@ beginDialog:
       variable: init:Topic.QADeadline
       prompt: "What is the **Q&A deadline** (date by which partners can ask clarification questions)?"
       entity:
-        kind: EmbeddedEntity
-        definition:
-          kind: DateTimeEntity
+        kind: PrebuiltEntity
+        entityType: datetimeV2
 
     # Step 6: Ask for Contact Person
     - kind: Question
@@ -87,9 +82,8 @@ beginDialog:
       variable: init:Topic.ContactPerson
       prompt: "Who is the **contact person** for this RFP? (Name, Email)"
       entity:
-        kind: EmbeddedEntity
-        definition:
-          kind: StringEntity
+        kind: PrebuiltEntity
+        entityType: freeText
 
     # Step 7: Confirm before sending
     - kind: SendActivity
@@ -105,9 +99,8 @@ beginDialog:
       variable: init:Topic.Confirmed
       prompt: "Type **Yes** to send or **No** to cancel."
       entity:
-        kind: EmbeddedEntity
-        definition:
-          kind: BooleanEntity
+        kind: PrebuiltEntity
+        entityType: boolean
 
     # Step 8: Branch on confirmation
     - kind: ConditionGroup
