@@ -1,28 +1,7 @@
 {
-  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-  "metadata": {
-    "name": "Response Collection — Monitor Incoming Emails",
-    "description": "Automatically monitors incoming emails for RFP responses, saves attachments to SharePoint, and updates the partner tracking list.",
-    "category": "KuokRFPLifecycle"
-  },
-  "connectionReferences": {
-    "shared_office365": {
-      "runtimeSource": "embedded",
-      "connection": { "connectionReferenceLogicalName": "kg_outlook_connection" },
-      "api": { "name": "shared_office365" }
-    },
-    "shared_sharepointonline": {
-      "runtimeSource": "embedded",
-      "connection": { "connectionReferenceLogicalName": "kg_sharepoint_connection" },
-      "api": { "name": "shared_sharepointonline" }
-    },
-    "shared_teams": {
-      "runtimeSource": "embedded",
-      "connection": { "connectionReferenceLogicalName": "kg_teams_connection" },
-      "api": { "name": "shared_teams" }
-    }
-  },
+  "_comment": "Response Collection — Monitor Incoming Emails — Automatically monitors incoming emails for RFP responses, saves attachments to SharePoint, and updates the partner tracking list.",
   "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "contentVersion": "1.0.0.0",
     "triggers": {
       "When_a_new_email_arrives_V3": {
@@ -52,24 +31,36 @@
       "Set_RFP_Reference": {
         "type": "InitializeVariable",
         "inputs": {
-          "variables": [{
-            "name": "rfpReference",
-            "type": "string",
-            "value": "KG-RFP-@{outputs('Extract_RFP_Reference')}"
-          }]
+          "variables": [
+            {
+              "name": "rfpReference",
+              "type": "string",
+              "value": "KG-RFP-@{outputs('Extract_RFP_Reference')}"
+            }
+          ]
         },
-        "runAfter": { "Extract_RFP_Reference": ["Succeeded"] }
+        "runAfter": {
+          "Extract_RFP_Reference": [
+            "Succeeded"
+          ]
+        }
       },
       "Get_Sender_Email": {
         "type": "InitializeVariable",
         "inputs": {
-          "variables": [{
-            "name": "senderEmail",
-            "type": "string",
-            "value": "@triggerOutputs()?['body/from']"
-          }]
+          "variables": [
+            {
+              "name": "senderEmail",
+              "type": "string",
+              "value": "@triggerOutputs()?['body/from']"
+            }
+          ]
         },
-        "runAfter": { "Set_RFP_Reference": ["Succeeded"] }
+        "runAfter": {
+          "Set_RFP_Reference": [
+            "Succeeded"
+          ]
+        }
       },
       "Lookup_Partner": {
         "type": "OpenApiConnection",
@@ -85,13 +76,22 @@
             "$filter": "Email eq '@{variables('senderEmail')}' and RFPReference eq '@{variables('rfpReference')}'"
           }
         },
-        "runAfter": { "Get_Sender_Email": ["Succeeded"] }
+        "runAfter": {
+          "Get_Sender_Email": [
+            "Succeeded"
+          ]
+        }
       },
       "Condition_Partner_Found": {
         "type": "If",
         "expression": {
           "and": [
-            { "greater": ["@length(body('Lookup_Partner')?['value'])", 0] }
+            {
+              "greater": [
+                "@length(body('Lookup_Partner')?['value'])",
+                0
+              ]
+            }
           ]
         },
         "actions": {
@@ -120,7 +120,11 @@
                 }
               }
             },
-            "runAfter": { "Get_Partner_Company": ["Succeeded"] }
+            "runAfter": {
+              "Get_Partner_Company": [
+                "Succeeded"
+              ]
+            }
           },
           "Update_Partner_Tracking": {
             "type": "OpenApiConnection",
@@ -140,7 +144,11 @@
                 }
               }
             },
-            "runAfter": { "For_Each_Attachment": ["Succeeded"] }
+            "runAfter": {
+              "For_Each_Attachment": [
+                "Succeeded"
+              ]
+            }
           },
           "Post_Response_Notification": {
             "type": "OpenApiConnection",
@@ -157,7 +165,11 @@
                 "body/messageBody": "📩 **Response Received!**\n\n**RFP:** @{variables('rfpReference')}\n**Partner:** @{outputs('Get_Partner_Company')}\n**Received:** @{utcNow()}\n**Attachments:** @{length(triggerOutputs()?['body/attachments'])} files saved to SharePoint"
               }
             },
-            "runAfter": { "Update_Partner_Tracking": ["Succeeded"] }
+            "runAfter": {
+              "Update_Partner_Tracking": [
+                "Succeeded"
+              ]
+            }
           }
         },
         "else": {
@@ -168,9 +180,12 @@
             }
           }
         },
-        "runAfter": { "Lookup_Partner": ["Succeeded"] }
+        "runAfter": {
+          "Lookup_Partner": [
+            "Succeeded"
+          ]
+        }
       }
     }
-  },
-  "schemaVersion": "1.0.0.0"
+  }
 }

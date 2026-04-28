@@ -1,23 +1,7 @@
 {
-  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-  "metadata": {
-    "name": "Post-Deadline Summary",
-    "description": "Triggers after the submission deadline passes. Compiles a summary of responses received vs pending and posts to Teams.",
-    "category": "KuokRFPLifecycle"
-  },
-  "connectionReferences": {
-    "shared_sharepointonline": {
-      "runtimeSource": "embedded",
-      "connection": { "connectionReferenceLogicalName": "kg_sharepoint_connection" },
-      "api": { "name": "shared_sharepointonline" }
-    },
-    "shared_teams": {
-      "runtimeSource": "embedded",
-      "connection": { "connectionReferenceLogicalName": "kg_teams_connection" },
-      "api": { "name": "shared_teams" }
-    }
-  },
+  "_comment": "Post-Deadline Summary — Triggers after the submission deadline passes. Compiles a summary of responses received vs pending and posts to Teams.",
   "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "contentVersion": "1.0.0.0",
     "triggers": {
       "Recurrence_Daily_Check": {
@@ -73,7 +57,11 @@
               "received": "@length(filter(body('Get_All_Partners_For_RFP')?['value'], item(), 'ResponseReceived', true))",
               "pending": "@sub(length(body('Get_All_Partners_For_RFP')?['value']), length(filter(body('Get_All_Partners_For_RFP')?['value'], item(), 'ResponseReceived', true)))"
             },
-            "runAfter": { "Get_All_Partners_For_RFP": ["Succeeded"] }
+            "runAfter": {
+              "Get_All_Partners_For_RFP": [
+                "Succeeded"
+              ]
+            }
           },
           "Update_Status_To_Collecting": {
             "type": "OpenApiConnection",
@@ -92,7 +80,11 @@
                 }
               }
             },
-            "runAfter": { "Count_Responses": ["Succeeded"] }
+            "runAfter": {
+              "Count_Responses": [
+                "Succeeded"
+              ]
+            }
           },
           "Post_Deadline_Summary_Card": {
             "type": "OpenApiConnection",
@@ -109,12 +101,19 @@
                 "body/messageBody": "🔔 **Submission Deadline Passed: @{items('For_Each_Past_Deadline_RFP')?['Title']}**\n\n**Deadline was:** @{items('For_Each_Past_Deadline_RFP')?['SubmissionDeadline']}\n\n📊 **Response Summary:**\n• **Total partners invited:** @{outputs('Count_Responses')?['total']}\n• **Responses received:** @{outputs('Count_Responses')?['received']} ✅\n• **Responses pending:** @{outputs('Count_Responses')?['pending']} ⚠️\n\n@{if(equals(outputs('Count_Responses')?['pending'], 0), '✅ All responses received! Ready for evaluation.', '⚠️ Some responses are still pending. Contact the RFP owner for next steps.')}"
               }
             },
-            "runAfter": { "Update_Status_To_Collecting": ["Succeeded"] }
+            "runAfter": {
+              "Update_Status_To_Collecting": [
+                "Succeeded"
+              ]
+            }
           }
         },
-        "runAfter": { "Get_RFPs_Past_Deadline": ["Succeeded"] }
+        "runAfter": {
+          "Get_RFPs_Past_Deadline": [
+            "Succeeded"
+          ]
+        }
       }
     }
-  },
-  "schemaVersion": "1.0.0.0"
+  }
 }

@@ -1,28 +1,7 @@
 {
-  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-  "metadata": {
-    "name": "Deadline Reminder — Approaching Deadline",
-    "description": "Runs daily at 9 AM SGT. Checks for RFPs with approaching deadlines and sends reminder emails to partners who haven't responded.",
-    "category": "KuokRFPLifecycle"
-  },
-  "connectionReferences": {
-    "shared_sharepointonline": {
-      "runtimeSource": "embedded",
-      "connection": { "connectionReferenceLogicalName": "kg_sharepoint_connection" },
-      "api": { "name": "shared_sharepointonline" }
-    },
-    "shared_office365": {
-      "runtimeSource": "embedded",
-      "connection": { "connectionReferenceLogicalName": "kg_outlook_connection" },
-      "api": { "name": "shared_office365" }
-    },
-    "shared_teams": {
-      "runtimeSource": "embedded",
-      "connection": { "connectionReferenceLogicalName": "kg_teams_connection" },
-      "api": { "name": "shared_teams" }
-    }
-  },
+  "_comment": "Deadline Reminder — Approaching Deadline — Runs daily at 9 AM SGT. Checks for RFPs with approaching deadlines and sends reminder emails to partners who haven't responded.",
   "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "contentVersion": "1.0.0.0",
     "triggers": {
       "Recurrence_Daily_9AM_SGT": {
@@ -39,7 +18,13 @@
       "Initialize_Reminder_Count": {
         "type": "InitializeVariable",
         "inputs": {
-          "variables": [{ "name": "reminderCount", "type": "integer", "value": 0 }]
+          "variables": [
+            {
+              "name": "reminderCount",
+              "type": "integer",
+              "value": 0
+            }
+          ]
         },
         "runAfter": {}
       },
@@ -57,7 +42,11 @@
             "$filter": "Status eq 'Issued' or Status eq 'Collecting'"
           }
         },
-        "runAfter": { "Initialize_Reminder_Count": ["Succeeded"] }
+        "runAfter": {
+          "Initialize_Reminder_Count": [
+            "Succeeded"
+          ]
+        }
       },
       "For_Each_Active_RFP": {
         "type": "Foreach",
@@ -71,8 +60,18 @@
             "type": "If",
             "expression": {
               "or": [
-                { "lessOrEquals": ["@outputs('Calculate_Days_Until_Deadline')", 7] },
-                { "lessOrEquals": ["@outputs('Calculate_Days_Until_Deadline')", 2] }
+                {
+                  "lessOrEquals": [
+                    "@outputs('Calculate_Days_Until_Deadline')",
+                    7
+                  ]
+                },
+                {
+                  "lessOrEquals": [
+                    "@outputs('Calculate_Days_Until_Deadline')",
+                    2
+                  ]
+                }
               ]
             },
             "actions": {
@@ -94,7 +93,11 @@
               "Set_Reminder_Type": {
                 "type": "Compose",
                 "inputs": "@if(lessOrEquals(outputs('Calculate_Days_Until_Deadline'), 2), 'FINAL', 'COURTESY')",
-                "runAfter": { "Get_Pending_Partners": ["Succeeded"] }
+                "runAfter": {
+                  "Get_Pending_Partners": [
+                    "Succeeded"
+                  ]
+                }
               },
               "For_Each_Pending_Partner": {
                 "type": "Foreach",
@@ -133,25 +136,51 @@
                         }
                       }
                     },
-                    "runAfter": { "Send_Reminder_Email": ["Succeeded"] }
+                    "runAfter": {
+                      "Send_Reminder_Email": [
+                        "Succeeded"
+                      ]
+                    }
                   },
                   "Increment_Total_Reminders": {
                     "type": "IncrementVariable",
-                    "inputs": { "name": "reminderCount", "value": 1 },
-                    "runAfter": { "Update_Reminder_Count_On_Partner": ["Succeeded"] }
+                    "inputs": {
+                      "name": "reminderCount",
+                      "value": 1
+                    },
+                    "runAfter": {
+                      "Update_Reminder_Count_On_Partner": [
+                        "Succeeded"
+                      ]
+                    }
                   }
                 },
-                "runAfter": { "Set_Reminder_Type": ["Succeeded"] }
+                "runAfter": {
+                  "Set_Reminder_Type": [
+                    "Succeeded"
+                  ]
+                }
               }
             },
-            "else": { "actions": {} }
+            "else": {
+              "actions": {}
+            }
           }
         },
-        "runAfter": { "Get_Active_RFPs": ["Succeeded"] }
+        "runAfter": {
+          "Get_Active_RFPs": [
+            "Succeeded"
+          ]
+        }
       },
       "Post_Reminder_Summary": {
         "type": "If",
-        "expression": { "greater": ["@variables('reminderCount')", 0] },
+        "expression": {
+          "greater": [
+            "@variables('reminderCount')",
+            0
+          ]
+        },
         "actions": {
           "Post_To_Teams": {
             "type": "OpenApiConnection",
@@ -170,10 +199,15 @@
             }
           }
         },
-        "else": { "actions": {} },
-        "runAfter": { "For_Each_Active_RFP": ["Succeeded"] }
+        "else": {
+          "actions": {}
+        },
+        "runAfter": {
+          "For_Each_Active_RFP": [
+            "Succeeded"
+          ]
+        }
       }
     }
-  },
-  "schemaVersion": "1.0.0.0"
+  }
 }

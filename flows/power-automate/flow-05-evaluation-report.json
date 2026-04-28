@@ -1,28 +1,7 @@
 {
-  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-  "metadata": {
-    "name": "Evaluation Report — Generate Document",
-    "description": "Receives evaluation data from the Copilot Studio Evaluator Agent, populates the evaluation report template, and posts the report to Teams for approval.",
-    "category": "KuokRFPLifecycle"
-  },
-  "connectionReferences": {
-    "shared_sharepointonline": {
-      "runtimeSource": "embedded",
-      "connection": { "connectionReferenceLogicalName": "kg_sharepoint_connection" },
-      "api": { "name": "shared_sharepointonline" }
-    },
-    "shared_teams": {
-      "runtimeSource": "embedded",
-      "connection": { "connectionReferenceLogicalName": "kg_teams_connection" },
-      "api": { "name": "shared_teams" }
-    },
-    "shared_wordonlinebusiness": {
-      "runtimeSource": "embedded",
-      "connection": { "connectionReferenceLogicalName": "kg_word_connection" },
-      "api": { "name": "shared_wordonlinebusiness" }
-    }
-  },
+  "_comment": "Evaluation Report — Generate Document — Receives evaluation data from the Copilot Studio Evaluator Agent, populates the evaluation report template, and posts the report to Teams for approval.",
   "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "contentVersion": "1.0.0.0",
     "triggers": {
       "manual": {
@@ -32,9 +11,15 @@
           "schema": {
             "type": "object",
             "properties": {
-              "rfpReference": { "type": "string" },
-              "recommendation": { "type": "string" },
-              "additionalComments": { "type": "string" },
+              "rfpReference": {
+                "type": "string"
+              },
+              "recommendation": {
+                "type": "string"
+              },
+              "additionalComments": {
+                "type": "string"
+              },
               "evaluationData": {
                 "type": "object",
                 "description": "Full evaluation JSON with partner scores, compliance matrix, and commercial comparison",
@@ -44,23 +29,50 @@
                     "items": {
                       "type": "object",
                       "properties": {
-                        "companyName": { "type": "string" },
-                        "complianceStatus": { "type": "string", "enum": ["Pass", "Fail"] },
-                        "technicalScore": { "type": "number" },
-                        "commercialScore": { "type": "number" },
-                        "riskScore": { "type": "number" },
-                        "overallScore": { "type": "number" },
-                        "strengths": { "type": "string" },
-                        "weaknesses": { "type": "string" }
+                        "companyName": {
+                          "type": "string"
+                        },
+                        "complianceStatus": {
+                          "type": "string",
+                          "enum": [
+                            "Pass",
+                            "Fail"
+                          ]
+                        },
+                        "technicalScore": {
+                          "type": "number"
+                        },
+                        "commercialScore": {
+                          "type": "number"
+                        },
+                        "riskScore": {
+                          "type": "number"
+                        },
+                        "overallScore": {
+                          "type": "number"
+                        },
+                        "strengths": {
+                          "type": "string"
+                        },
+                        "weaknesses": {
+                          "type": "string"
+                        }
                       }
                     }
                   },
-                  "recommendedPartner": { "type": "string" },
-                  "evaluationSummary": { "type": "string" }
+                  "recommendedPartner": {
+                    "type": "string"
+                  },
+                  "evaluationSummary": {
+                    "type": "string"
+                  }
                 }
               }
             },
-            "required": ["rfpReference", "evaluationData"]
+            "required": [
+              "rfpReference",
+              "evaluationData"
+            ]
           }
         }
       }
@@ -69,11 +81,13 @@
       "Set_Report_Reference": {
         "type": "InitializeVariable",
         "inputs": {
-          "variables": [{
-            "name": "reportReference",
-            "type": "string",
-            "value": "EVAL-@{triggerBody()['rfpReference']}-@{formatDateTime(utcNow(), 'yyyyMMdd')}"
-          }]
+          "variables": [
+            {
+              "name": "reportReference",
+              "type": "string",
+              "value": "EVAL-@{triggerBody()['rfpReference']}-@{formatDateTime(utcNow(), 'yyyyMMdd')}"
+            }
+          ]
         },
         "runAfter": {}
       },
@@ -96,7 +110,11 @@
             "additionalComments": "@{triggerBody()['additionalComments']}"
           }
         },
-        "runAfter": { "Set_Report_Reference": ["Succeeded"] }
+        "runAfter": {
+          "Set_Report_Reference": [
+            "Succeeded"
+          ]
+        }
       },
       "Save_Report_To_SharePoint": {
         "type": "OpenApiConnection",
@@ -113,7 +131,11 @@
             "body": "@body('Populate_Report_Template')?['Microsoft.PowerApps.CDS.FileBody']"
           }
         },
-        "runAfter": { "Populate_Report_Template": ["Succeeded"] }
+        "runAfter": {
+          "Populate_Report_Template": [
+            "Succeeded"
+          ]
+        }
       },
       "Update_RFP_Status": {
         "type": "OpenApiConnection",
@@ -132,7 +154,11 @@
             }
           }
         },
-        "runAfter": { "Save_Report_To_SharePoint": ["Succeeded"] }
+        "runAfter": {
+          "Save_Report_To_SharePoint": [
+            "Succeeded"
+          ]
+        }
       },
       "Post_Approval_Card_To_Teams": {
         "type": "OpenApiConnection",
@@ -149,7 +175,11 @@
             "body/messageBody": "📊 **Evaluation Report Ready for Approval**\n\n**RFP:** @{triggerBody()['rfpReference']}\n**Report:** @{variables('reportReference')}\n**Recommendation:** @{triggerBody()['recommendation']}\n\n**Summary:** @{triggerBody()['evaluationData']?['evaluationSummary']}\n\n[📄 Open Full Report](@{body('Save_Report_To_SharePoint')?['Path']})"
           }
         },
-        "runAfter": { "Update_RFP_Status": ["Succeeded"] }
+        "runAfter": {
+          "Update_RFP_Status": [
+            "Succeeded"
+          ]
+        }
       },
       "Respond_to_Copilot_Studio": {
         "type": "Response",
@@ -163,14 +193,21 @@
           "schema": {
             "type": "object",
             "properties": {
-              "reportUrl": { "type": "string" },
-              "reportReference": { "type": "string" }
+              "reportUrl": {
+                "type": "string"
+              },
+              "reportReference": {
+                "type": "string"
+              }
             }
           }
         },
-        "runAfter": { "Post_Approval_Card_To_Teams": ["Succeeded"] }
+        "runAfter": {
+          "Post_Approval_Card_To_Teams": [
+            "Succeeded"
+          ]
+        }
       }
     }
-  },
-  "schemaVersion": "1.0.0.0"
+  }
 }

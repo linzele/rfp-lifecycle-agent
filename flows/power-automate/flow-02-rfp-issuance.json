@@ -1,28 +1,7 @@
 {
-  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-  "metadata": {
-    "name": "RFP Issuance — Send to Partners",
-    "description": "Receives partner list and RFP document from Copilot Studio, sends RFP emails to each partner with the document attached, and logs issuance in the tracking list.",
-    "category": "KuokRFPLifecycle"
-  },
-  "connectionReferences": {
-    "shared_sharepointonline": {
-      "runtimeSource": "embedded",
-      "connection": { "connectionReferenceLogicalName": "kg_sharepoint_connection" },
-      "api": { "name": "shared_sharepointonline" }
-    },
-    "shared_office365": {
-      "runtimeSource": "embedded",
-      "connection": { "connectionReferenceLogicalName": "kg_outlook_connection" },
-      "api": { "name": "shared_office365" }
-    },
-    "shared_teams": {
-      "runtimeSource": "embedded",
-      "connection": { "connectionReferenceLogicalName": "kg_teams_connection" },
-      "api": { "name": "shared_teams" }
-    }
-  },
+  "_comment": "RFP Issuance — Send to Partners — Receives partner list and RFP document from Copilot Studio, sends RFP emails to each partner with the document attached, and logs issuance in the tracking list.",
   "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "contentVersion": "1.0.0.0",
     "triggers": {
       "manual": {
@@ -32,25 +11,47 @@
           "schema": {
             "type": "object",
             "properties": {
-              "rfpReference": { "type": "string" },
-              "rfpDocumentUrl": { "type": "string" },
-              "submissionDeadline": { "type": "string" },
-              "qaDeadline": { "type": "string" },
-              "contactPersonName": { "type": "string" },
-              "contactPersonEmail": { "type": "string" },
+              "rfpReference": {
+                "type": "string"
+              },
+              "rfpDocumentUrl": {
+                "type": "string"
+              },
+              "submissionDeadline": {
+                "type": "string"
+              },
+              "qaDeadline": {
+                "type": "string"
+              },
+              "contactPersonName": {
+                "type": "string"
+              },
+              "contactPersonEmail": {
+                "type": "string"
+              },
               "partners": {
                 "type": "array",
                 "items": {
                   "type": "object",
                   "properties": {
-                    "name": { "type": "string" },
-                    "company": { "type": "string" },
-                    "email": { "type": "string" }
+                    "name": {
+                      "type": "string"
+                    },
+                    "company": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             },
-            "required": ["rfpReference", "rfpDocumentUrl", "partners"]
+            "required": [
+              "rfpReference",
+              "rfpDocumentUrl",
+              "partners"
+            ]
           }
         }
       }
@@ -59,7 +60,13 @@
       "Initialize_Sent_Count": {
         "type": "InitializeVariable",
         "inputs": {
-          "variables": [{ "name": "sentCount", "type": "integer", "value": 0 }]
+          "variables": [
+            {
+              "name": "sentCount",
+              "type": "integer",
+              "value": 0
+            }
+          ]
         },
         "runAfter": {}
       },
@@ -76,7 +83,11 @@
             "id": "@triggerBody()['rfpDocumentUrl']"
           }
         },
-        "runAfter": { "Initialize_Sent_Count": ["Succeeded"] }
+        "runAfter": {
+          "Initialize_Sent_Count": [
+            "Succeeded"
+          ]
+        }
       },
       "For_Each_Partner": {
         "type": "Foreach",
@@ -127,15 +138,30 @@
                 }
               }
             },
-            "runAfter": { "Send_RFP_Email": ["Succeeded"] }
+            "runAfter": {
+              "Send_RFP_Email": [
+                "Succeeded"
+              ]
+            }
           },
           "Increment_Sent_Count": {
             "type": "IncrementVariable",
-            "inputs": { "name": "sentCount", "value": 1 },
-            "runAfter": { "Create_Partner_Tracking_Entry": ["Succeeded"] }
+            "inputs": {
+              "name": "sentCount",
+              "value": 1
+            },
+            "runAfter": {
+              "Create_Partner_Tracking_Entry": [
+                "Succeeded"
+              ]
+            }
           }
         },
-        "runAfter": { "Get_RFP_Document": ["Succeeded"] }
+        "runAfter": {
+          "Get_RFP_Document": [
+            "Succeeded"
+          ]
+        }
       },
       "Update_RFP_Status_to_Issued": {
         "type": "OpenApiConnection",
@@ -155,7 +181,11 @@
             }
           }
         },
-        "runAfter": { "For_Each_Partner": ["Succeeded"] }
+        "runAfter": {
+          "For_Each_Partner": [
+            "Succeeded"
+          ]
+        }
       },
       "Post_Teams_Summary": {
         "type": "OpenApiConnection",
@@ -172,7 +202,11 @@
             "body/messageBody": "📧 **RFP Issued:** @{triggerBody()['rfpReference']}\n\n**Partners emailed:** @{variables('sentCount')}\n**Deadline:** @{triggerBody()['submissionDeadline']}\n**Contact:** @{triggerBody()['contactPersonName']}"
           }
         },
-        "runAfter": { "Update_RFP_Status_to_Issued": ["Succeeded"] }
+        "runAfter": {
+          "Update_RFP_Status_to_Issued": [
+            "Succeeded"
+          ]
+        }
       },
       "Respond_to_Copilot_Studio": {
         "type": "Response",
@@ -185,13 +219,18 @@
           "schema": {
             "type": "object",
             "properties": {
-              "issuedCount": { "type": "integer" }
+              "issuedCount": {
+                "type": "integer"
+              }
             }
           }
         },
-        "runAfter": { "Post_Teams_Summary": ["Succeeded"] }
+        "runAfter": {
+          "Post_Teams_Summary": [
+            "Succeeded"
+          ]
+        }
       }
     }
-  },
-  "schemaVersion": "1.0.0.0"
+  }
 }

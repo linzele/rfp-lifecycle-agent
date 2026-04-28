@@ -1,28 +1,7 @@
 {
-  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-  "metadata": {
-    "name": "RFP Creation — Populate Template",
-    "description": "Receives structured RFP data from Copilot Studio, selects the correct Word template from SharePoint based on engagement type, populates it, and saves the generated document.",
-    "category": "KuokRFPLifecycle"
-  },
-  "connectionReferences": {
-    "shared_sharepointonline": {
-      "runtimeSource": "embedded",
-      "connection": { "connectionReferenceLogicalName": "kg_sharepoint_connection" },
-      "api": { "name": "shared_sharepointonline" }
-    },
-    "shared_teams": {
-      "runtimeSource": "embedded",
-      "connection": { "connectionReferenceLogicalName": "kg_teams_connection" },
-      "api": { "name": "shared_teams" }
-    },
-    "shared_wordonlinebusiness": {
-      "runtimeSource": "embedded",
-      "connection": { "connectionReferenceLogicalName": "kg_word_connection" },
-      "api": { "name": "shared_wordonlinebusiness" }
-    }
-  },
+  "_comment": "RFP Creation — Populate Template — Receives structured RFP data from Copilot Studio, selects the correct Word template from SharePoint based on engagement type, populates it, and saves the generated document.",
   "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "contentVersion": "1.0.0.0",
     "triggers": {
       "manual": {
@@ -32,15 +11,45 @@
           "schema": {
             "type": "object",
             "properties": {
-              "rfpReference": { "type": "string", "title": "RFP Reference" },
-              "engagementType": { "type": "string", "title": "Engagement Type", "enum": ["Turnkey", "ManagedServices", "AugmentedResources"] },
-              "projectName": { "type": "string", "title": "Project Name" },
-              "projectDescription": { "type": "string", "title": "Project Description" },
-              "budgetRange": { "type": "string", "title": "Budget Range" },
-              "timeline": { "type": "string", "title": "Timeline" },
-              "submissionDeadline": { "type": "string", "title": "Submission Deadline" }
+              "rfpReference": {
+                "type": "string",
+                "title": "RFP Reference"
+              },
+              "engagementType": {
+                "type": "string",
+                "title": "Engagement Type",
+                "enum": [
+                  "Turnkey",
+                  "ManagedServices",
+                  "AugmentedResources"
+                ]
+              },
+              "projectName": {
+                "type": "string",
+                "title": "Project Name"
+              },
+              "projectDescription": {
+                "type": "string",
+                "title": "Project Description"
+              },
+              "budgetRange": {
+                "type": "string",
+                "title": "Budget Range"
+              },
+              "timeline": {
+                "type": "string",
+                "title": "Timeline"
+              },
+              "submissionDeadline": {
+                "type": "string",
+                "title": "Submission Deadline"
+              }
             },
-            "required": ["rfpReference", "engagementType", "projectName"]
+            "required": [
+              "rfpReference",
+              "engagementType",
+              "projectName"
+            ]
           }
         }
       }
@@ -100,8 +109,14 @@
             }
           }
         },
-        "default": { "actions": {} },
-        "runAfter": { "Initialize_RFP_Reference": ["Succeeded"] }
+        "default": {
+          "actions": {}
+        },
+        "runAfter": {
+          "Initialize_RFP_Reference": [
+            "Succeeded"
+          ]
+        }
       },
       "Populate_Word_Template": {
         "type": "OpenApiConnection",
@@ -123,7 +138,11 @@
             "submissionDeadline": "@triggerBody()['submissionDeadline']"
           }
         },
-        "runAfter": { "Switch_Engagement_Type": ["Succeeded"] }
+        "runAfter": {
+          "Switch_Engagement_Type": [
+            "Succeeded"
+          ]
+        }
       },
       "Create_File_In_SharePoint": {
         "type": "OpenApiConnection",
@@ -140,7 +159,11 @@
             "body": "@body('Populate_Word_Template')?['Microsoft.PowerApps.CDS.FileBody']"
           }
         },
-        "runAfter": { "Populate_Word_Template": ["Succeeded"] }
+        "runAfter": {
+          "Populate_Word_Template": [
+            "Succeeded"
+          ]
+        }
       },
       "Create_Tracking_Item": {
         "type": "OpenApiConnection",
@@ -162,7 +185,11 @@
             }
           }
         },
-        "runAfter": { "Create_File_In_SharePoint": ["Succeeded"] }
+        "runAfter": {
+          "Create_File_In_SharePoint": [
+            "Succeeded"
+          ]
+        }
       },
       "Post_Teams_Notification": {
         "type": "OpenApiConnection",
@@ -179,7 +206,11 @@
             "body/messageBody": "📄 **New RFP Created:** @{variables('rfpReference')}\n\n**Project:** @{triggerBody()['projectName']}\n**Type:** @{triggerBody()['engagementType']}\n**Deadline:** @{triggerBody()['submissionDeadline']}\n\n[Open Document](@{body('Create_File_In_SharePoint')?['Path']})"
           }
         },
-        "runAfter": { "Create_Tracking_Item": ["Succeeded"] }
+        "runAfter": {
+          "Create_Tracking_Item": [
+            "Succeeded"
+          ]
+        }
       },
       "Respond_to_Copilot_Studio": {
         "type": "Response",
@@ -193,14 +224,21 @@
           "schema": {
             "type": "object",
             "properties": {
-              "rfpReference": { "type": "string" },
-              "documentUrl": { "type": "string" }
+              "rfpReference": {
+                "type": "string"
+              },
+              "documentUrl": {
+                "type": "string"
+              }
             }
           }
         },
-        "runAfter": { "Post_Teams_Notification": ["Succeeded"] }
+        "runAfter": {
+          "Post_Teams_Notification": [
+            "Succeeded"
+          ]
+        }
       }
     }
-  },
-  "schemaVersion": "1.0.0.0"
+  }
 }
