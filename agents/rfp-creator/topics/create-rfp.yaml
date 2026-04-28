@@ -15,23 +15,20 @@ beginDialog:
       - Prepare an RFP
       - Build an RFP
   actions:
-    # Step 1: Ask for Project Name
     - kind: Question
       id: ask_project_name
       interruptionPolicy:
         allowInterruption: true
       variable: init:Topic.ProjectName
-      prompt: "What is the **project name** for this RFP?"
+      prompt: What is the project name for this RFP?
       entity:
         kind: StringPrebuiltEntity
-
-    # Step 2: Ask for Engagement Type
     - kind: Question
       id: ask_engagement_type
       interruptionPolicy:
         allowInterruption: true
       variable: init:Topic.EngagementType
-      prompt: "What **engagement type** is this RFP for?"
+      prompt: What engagement type is this RFP for?
       entity:
         kind: EmbeddedEntity
         definition:
@@ -43,71 +40,58 @@ beginDialog:
               displayName: Managed Services
             - id: augmented_resources
               displayName: Augmented Resources
-
-    # Step 3: Ask for Project Description
     - kind: Question
       id: ask_project_description
       interruptionPolicy:
         allowInterruption: true
       variable: init:Topic.ProjectDescription
-      prompt: "Please provide a **brief description** of the project scope and objectives."
+      prompt: Please provide a brief description of the project scope and objectives.
       entity:
         kind: StringPrebuiltEntity
-
-    # Step 4: Ask for Budget Range
     - kind: Question
       id: ask_budget_range
       interruptionPolicy:
         allowInterruption: true
       variable: init:Topic.BudgetRange
-      prompt: "What is the **estimated budget range** (e.g., SGD 500K – 1M)?"
+      prompt: What is the estimated budget range (e.g., SGD 500K to 1M)?
       entity:
         kind: StringPrebuiltEntity
-
-    # Step 5: Ask for Timeline
     - kind: Question
       id: ask_timeline
       interruptionPolicy:
         allowInterruption: true
       variable: init:Topic.Timeline
-      prompt: "What is the **expected project timeline** (start date and duration)?"
+      prompt: What is the expected project timeline (start date and duration)?
       entity:
         kind: StringPrebuiltEntity
-
-    # Step 6: Ask for Submission Deadline
     - kind: Question
       id: ask_submission_deadline
       interruptionPolicy:
         allowInterruption: true
       variable: init:Topic.SubmissionDeadline
-      prompt: "What is the **RFP submission deadline** for partners?"
+      prompt: What is the RFP submission deadline for partners?
       entity:
         kind: DateTimePrebuiltEntity
-
-    # Step 7: Confirm details before generation
     - kind: SendActivity
       id: confirm_details
       activity:
         text:
-          - "📋 **RFP Summary — Please Confirm**\n\n• **Project:** {Topic.ProjectName}\n• **Type:** {Topic.EngagementType}\n• **Description:** {Topic.ProjectDescription}\n• **Budget:** {Topic.BudgetRange}\n• **Timeline:** {Topic.Timeline}\n• **Deadline:** {Topic.SubmissionDeadline}\n\nShall I generate the RFP document now?"
+          -  RFP Summary  Please Confirm   Project: {Topic.ProjectName}  Type: {Topic.EngagementType}  Description: {Topic.ProjectDescription}  Budget: {Topic.BudgetRange}  Timeline: {Topic.Timeline}  Deadline: {Topic.SubmissionDeadline}  Shall I generate the RFP document now?
 
     - kind: Question
       id: ask_confirm
       interruptionPolicy:
         allowInterruption: true
       variable: init:Topic.Confirmed
-      prompt: "Type **Yes** to generate or **No** to make changes."
+      prompt: Type Yes to generate or No to make changes.
       entity:
         kind: BooleanPrebuiltEntity
-
-    # Step 8: Branch on confirmation
     - kind: ConditionGroup
       id: check_confirmation
       conditions:
         - id: confirmed_yes
           condition: =Topic.Confirmed = true
           actions:
-            # Step 9: Call Power Automate flow to generate RFP
             - kind: InvokeFlowAction
               id: call_generate_rfp_flow
               input:
@@ -122,17 +106,17 @@ beginDialog:
                 binding:
                   rfpReference: Topic.RFPReference
                   documentUrl: Topic.DocumentUrl
-              flowId: # CONFIGURE: Paste your "RFP Creation — Populate Template" flow ID here
+              flowId: CONFIGURE_FLOW_ID_HERE
 
             - kind: SendActivity
               id: success_message
               activity:
                 text:
-                  - "✅ **RFP Generated Successfully!**\n\n• **Reference:** {Topic.RFPReference}\n• **Document:** [Open in SharePoint]({Topic.DocumentUrl})\n\nThe RFP has been saved to the SharePoint document library. You can now:\n• Say **'Issue RFP'** to send it to partners\n• Say **'Edit RFP'** to make changes"
+                  -  RFP Generated Successfully!   Reference: {Topic.RFPReference}  Document: {Topic.DocumentUrl}  The RFP has been saved to the SharePoint document library. You can now:  Say Issue RFP to send it to partners  Say Edit RFP to make changes
 
       elseActions:
         - kind: SendActivity
           id: cancelled_message
           activity:
             text:
-              - "No problem — let me know what you'd like to change. You can say **'Create RFP'** again when you're ready."
+              - No problem, let me know what you would like to change. You can say Create RFP again when ready.

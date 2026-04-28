@@ -13,37 +13,30 @@ beginDialog:
       - Final report
       - Compile evaluation
   actions:
-    # Step 1: Ask for RFP Reference
     - kind: Question
       id: ask_rfp_reference
       interruptionPolicy:
         allowInterruption: true
       variable: init:Topic.RFPReference
-      prompt: "Which **RFP Reference** should the evaluation report be for?"
+      prompt: Which RFP Reference should the evaluation report be for?
       entity:
         kind: StringPrebuiltEntity
-
-    # Step 2: Ask for recommendation
     - kind: Question
       id: ask_recommendation
       interruptionPolicy:
         allowInterruption: true
       variable: init:Topic.Recommendation
-      prompt: "Based on the evaluation, which **partner do you recommend** (or should I recommend the highest scorer)?"
+      prompt: Based on the evaluation, which partner do you recommend (or should I recommend the highest scorer)?
       entity:
         kind: StringPrebuiltEntity
-
-    # Step 3: Ask for additional comments
     - kind: Question
       id: ask_comments
       interruptionPolicy:
         allowInterruption: true
       variable: init:Topic.AdditionalComments
-      prompt: "Any **additional comments** or caveats to include in the report? (Type 'None' to skip)"
+      prompt: Any additional comments or caveats to include in the report? Type None to skip.
       entity:
         kind: StringPrebuiltEntity
-
-    # Step 4: Generate the report via Power Automate
     - kind: InvokeFlowAction
       id: call_generate_report_flow
       input:
@@ -55,10 +48,10 @@ beginDialog:
         binding:
           reportUrl: Topic.ReportUrl
           reportReference: Topic.ReportReference
-      flowId: # CONFIGURE: Paste your "Evaluation Report — Generate Document" flow ID here
+      flowId: CONFIGURE_FLOW_ID_HERE
 
     - kind: SendActivity
       id: report_generated
       activity:
         text:
-          - "📊 **Evaluation Report Generated!**\n\n• **Report:** {Topic.ReportReference}\n• **Document:** [Open in SharePoint]({Topic.ReportUrl})\n• **Recommendation:** {Topic.Recommendation}\n\nThe report has been posted to the Teams Deal Room for review. Approvers can click **Approve** or **Request Changes** on the Adaptive Card.\n\n✅ RFP lifecycle for {Topic.RFPReference} is now pending approval."
+          -  Evaluation Report Generated!   Report: {Topic.ReportReference}  Document: {Topic.ReportUrl}  Recommendation: {Topic.Recommendation}  The report has been posted to the Teams Deal Room for review. Approvers can click Approve or Request Changes on the Adaptive Card.   RFP lifecycle for {Topic.RFPReference} is now pending approval.
