@@ -106,7 +106,7 @@ beginDialog:
                 binding:
                   rfpReference: Topic.RFPReference
                   documentUrl: Topic.DocumentUrl
-              flowId: CONFIGURE_FLOW_ID_HERE
+              flowId: 00000000-0000-0000-0000-000000000000
 
             - kind: SendActivity
               id: success_message

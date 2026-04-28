@@ -48,7 +48,7 @@ beginDialog:
         binding:
           reportUrl: Topic.ReportUrl
           reportReference: Topic.ReportReference
-      flowId: CONFIGURE_FLOW_ID_HERE
+      flowId: 00000000-0000-0000-0000-000000000000
 
     - kind: SendActivity
       id: report_generated

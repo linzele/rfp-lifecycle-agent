@@ -32,7 +32,7 @@ beginDialog:
           partnerCount: Topic.PartnerCount
           partnerList: Topic.PartnerList
           engagementType: Topic.EngagementType
-      flowId: CONFIGURE_FLOW_ID_HERE
+      flowId: 00000000-0000-0000-0000-000000000000
     - kind: SendActivity
       id: show_responses
       activity:
