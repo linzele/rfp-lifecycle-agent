@@ -3,8 +3,6 @@
 An end-to-end AI Agent solution for **Kuok Group IT** that automates the full RFP lifecycle — from **creation** and **issuance** to **evaluation** and **reporting** — built on Microsoft Copilot Studio, Power Platform, SharePoint, and Microsoft Teams.
 
 > **Built for:** Kuok Group IT Team  
-> **Foundation:** [Microsoft Agent for RFP Response Solution Accelerator](https://github.com/microsoft/agent-for-rfp-response-solution-accelerator)  
-> **Agent Patterns:** [Awesome Copilot Studio Agents](https://github.com/kesslernity/awesome-copilot-studio-agents)  
 > **Flow Build Guide:** [Step-by-step visual guide](https://linzele.github.io/kuok-rfp-agent/flows/power-automate/all-flows-guide.html)
 
 ---
