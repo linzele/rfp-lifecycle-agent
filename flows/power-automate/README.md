@@ -1,82 +1,100 @@
-# Power Automate Flows — Import Guide
+# Power Automate Flows — Setup Guide
 
-This folder contains 6 Power Automate cloud flow definitions in JSON format, ready to import into your Power Platform environment.
+This folder contains 6 Power Automate flow definitions as JSON reference files. These are **logic references**, not direct import packages. Create your flows from within Copilot Studio, then use these JSONs to build the action logic.
 
 ## Flow Inventory
 
 | # | File | Trigger | Description |
 |---|------|---------|-------------|
-| 1 | `flow-01-rfp-creation.json` | Manual (Copilot Studio) | Populates Word template, saves to SharePoint, posts to Teams |
-| 2 | `flow-02-rfp-issuance.json` | Manual (Copilot Studio) | Sends RFP emails to partners, logs tracking entries |
+| 1 | `flow-01-rfp-creation.json` | Copilot Studio | Populates Word template, saves to SharePoint, posts to Teams |
+| 2 | `flow-02-rfp-issuance.json` | Copilot Studio | Sends RFP emails to partners, logs tracking entries |
 | 3 | `flow-03-response-collection.json` | Automated (new email) | Monitors inbox for RFP responses, saves attachments |
 | 4 | `flow-04-deadline-reminder.json` | Scheduled (daily 9 AM SGT) | Sends courtesy/final reminders to pending partners |
-| 5 | `flow-05-evaluation-report.json` | Manual (Copilot Studio) | Generates evaluation report, posts approval card |
+| 5 | `flow-05-evaluation-report.json` | Copilot Studio | Generates evaluation report, posts approval card |
 | 6 | `flow-06-post-deadline-summary.json` | Scheduled (daily 10 AM SGT) | Posts response summary after deadline passes |
 
-## How to Import
+## How to Create Flows (Recommended)
 
-### Option A: Import via Power Automate Portal
+### Copilot Studio-Triggered Flows (Flows 1, 2, 5)
+
+These flows are called from topic YAML files via `InvokeFlowAction`. Create them directly from Copilot Studio so they are auto-connected.
+
+1. Open your agent in [Copilot Studio](https://copilotstudio.microsoft.com)
+2. Open the topic that calls this flow (e.g., `create-rfp` topic for Flow 1)
+3. In the topic editor, click the **Call an action** node (+) and select **Create a new flow**
+4. Power Automate opens with a pre-configured trigger (Copilot Studio trigger) and response
+5. Build the flow logic using the corresponding JSON file as your reference
+6. Add each action step from the JSON into the visual designer
+7. Configure your SharePoint site, Teams channel, and connector connections
+8. **Save** the flow — it auto-registers with Copilot Studio
+9. Back in Copilot Studio, the flow appears in the action dropdown — select it
+10. Map the input/output variables to your topic variables
+
+### Standalone Flows (Flows 3, 4, 6)
+
+These flows run independently (email triggers or daily schedules). Create them in Power Automate directly.
 
 1. Go to [make.powerautomate.com](https://make.powerautomate.com)
 2. Select your environment (must match Copilot Studio environment)
-3. Click **My flows** → **Import** → **Import Package (Legacy)**
-4. Upload each JSON file
-5. Map the connection references to your environment's connections
+3. Click **+ Create** and select the trigger type
+   - Flow 3: **Automated cloud flow** with "When a new email arrives" trigger
+   - Flow 4: **Scheduled cloud flow** with daily recurrence at 9 AM SGT
+   - Flow 6: **Scheduled cloud flow** with daily recurrence at 10 AM SGT
+4. Build the action steps using the corresponding JSON as your reference
+5. Configure connections and save
 
-### Option B: Paste into Copilot Studio Action
+### Step-by-Step: Reading the JSON Reference
 
-For flows triggered by Copilot Studio (Flows 1, 2, 5):
+Each JSON file has this structure. Use it as a blueprint for adding actions in the designer.
 
-1. Open your agent in [Copilot Studio](https://copilotstudio.microsoft.com)
-2. Navigate to **Actions** → **+ Add an action** → **Create a new flow**
-3. This opens the Power Automate editor
-4. Switch to **Code view** (toggle in top-right)
-5. Replace the default JSON with the contents of the flow file
-6. Switch back to **Designer view** to verify
-7. Configure the connection references (see below)
-8. **Save** the flow
-
-### Option C: Power Platform CLI
-
-```bash
-# Install Power Platform CLI
-npm install -g @microsoft/powerplatform-cli
-
-# Authenticate
-pac auth create --environment https://YOUR_ORG.crm.dynamics.com
-
-# Import solution (if packaged)
-pac solution import --path ./solution/KuokRFPLifecycle.zip
+```
+definition.triggers   → Already set up when you create the flow
+definition.actions    → Each key is one action to add in the designer
+  ├── Type            → The Power Automate action type
+  ├── inputs          → The parameters to configure
+  └── runAfter        → Which action it follows (determines order)
 ```
 
-## Configuration Required
+**Example** (from flow-01-rfp-creation.json):
+- `Initialize_RFP_Reference` → Add "Initialize variable" action, set name to rfpReference
+- `Switch_Engagement_Type` → Add "Switch" action on engagementType
+- `Populate_Word_Template` → Add "Populate a Word template" action
+- `Create_File_In_SharePoint` → Add "Create file" SharePoint action
+- `Post_Teams_Notification` → Add "Post message in a chat or channel" Teams action
+- `Respond_to_Copilot_Studio` → Add "Respond to Copilot" action with output variables
 
-After importing, search for `CONFIGURE_` placeholders in each flow and replace them:
+## Configuration Values
+
+Replace these placeholders when building your flows:
 
 | Placeholder | Replace With |
 |-------------|-------------|
 | `CONFIGURE_SHAREPOINT_SITE_URL` | Your SharePoint site URL (e.g., `https://kuokgroup.sharepoint.com/sites/IT-RFP`) |
 | `CONFIGURE_DOCUMENT_LIBRARY_ID` | The document library GUID from SharePoint |
 | `CONFIGURE_TEAMS_CHANNEL_ID` | The Teams Deal Room channel ID |
-| `CONFIGURE_LOOKUP_BY_RFP_REFERENCE` | Replace with a "Get Items" + filter pattern for your list |
 
-## Connection References
+## Required Connectors
 
-Each flow uses these connectors — ensure they're available in your environment:
+Ensure these connectors are available in your Power Platform environment:
 
-| Connector | Connection Reference Name | Used By |
-|-----------|--------------------------|---------|
-| SharePoint | `kg_sharepoint_connection` | All flows |
-| Office 365 Outlook | `kg_outlook_connection` | Flows 2, 3, 4 |
-| Microsoft Teams | `kg_teams_connection` | All flows |
-| Word Online (Business) | `kg_word_connection` | Flows 1, 5 |
+| Connector | Used By Flows |
+|-----------|--------------|
+| SharePoint | All flows |
+| Office 365 Outlook | Flows 2, 3, 4 |
+| Microsoft Teams | All flows |
+| Word Online (Business) | Flows 1, 5 |
 
-## Linking Flows to Copilot Studio Topics
+## Linking Flows to Topic YAML Files
 
-After importing the flows, link them to the agent topics:
+After creating the flows from Copilot Studio, update the `flowId` in each topic YAML:
 
-1. **RFP Creator Agent** → `create-rfp.yaml` → Link to **Flow 1** (RFP Creation)
-2. **RFP Issuer Agent** → `issue-rfp.yaml` → Link to **Flow 2** (RFP Issuance)
-3. **RFP Evaluator Agent** → `generate-report.yaml` → Link to **Flow 5** (Evaluation Report)
+1. In Power Automate, open the flow and copy its flow ID from the URL (the GUID)
+2. In the topic YAML files, replace `00000000-0000-0000-0000-000000000000` with the real GUID
 
-In each topic YAML, find the `flowId:` comment and replace with the actual flow ID from Power Automate.
+| Agent | Topic File | Flow |
+|-------|-----------|------|
+| RFP Creator | `create-rfp.yaml` | Flow 1 — RFP Creation |
+| RFP Issuer | `issue-rfp.yaml` | Flow 2 — RFP Issuance |
+| RFP Issuer | `check-status.yaml` | Flow 3 — Response Collection |
+| RFP Evaluator | `evaluate-responses.yaml` | Flow 3 — Response Collection |
+| RFP Evaluator | `generate-report.yaml` | Flow 5 — Evaluation Report |
