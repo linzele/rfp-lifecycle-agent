@@ -63,16 +63,19 @@ kuok-rfp-agent/
 │   └── standard-terms/standard-terms.md
 ├── flows/
 │   ├── flow-definitions.md            # Flow specifications (human-readable)
-│   └── power-automate/               # ⬅ NEW: Importable flow JSON
-│       ├── README.md                  # Import guide
+│   └── power-automate/               # Flow JSON references + setup guide
+│       ├── README.md                  # Setup guide with links to visual guide
 │       ├── flow-01-rfp-creation.json
 │       ├── flow-02-rfp-issuance.json
 │       ├── flow-03-response-collection.json
 │       ├── flow-04-deadline-reminder.json
 │       ├── flow-05-evaluation-report.json
 │       └── flow-06-post-deadline-summary.json
-├── solution/
-│   └── IMPORT-GUIDE.md               # ⬅ NEW: End-to-end import guide
+├── docs/
+│   ├── guides/
+│   │   └── all-flows-guide.html      # Visual step-by-step flow build guide
+│   ├── user-guide.md
+│   └── customization-guide.md
 ├── deployment/
 │   ├── README.md
 │   └── images/solution-architecture.svg
@@ -133,20 +136,20 @@ Evaluates partner responses against defined criteria using deep reasoning and ge
 ### Deployment Steps
 
 1. **SharePoint Setup** — Create site and document libraries ([details](deployment/README.md#step-1-sharepoint-setup))
-2. **Import Topic YAML** — Paste topic YAML into Copilot Studio agents ([guide](solution/IMPORT-GUIDE.md))
-3. **Import Flow JSON** — Import Power Automate flows and configure connections ([guide](flows/power-automate/README.md))
+2. **Import Topic YAML** — Paste topic YAML into Copilot Studio agents ([topic setup](agents/rfp-creator/topics/))
+3. **Build Power Automate Flows** — Follow the visual step-by-step guide ([build guide](docs/guides/all-flows-guide.html)) or use JSON references ([flow README](flows/power-automate/README.md))
 4. **Knowledge Base Setup** — Upload standard terms, templates, and evaluation guidelines ([details](deployment/README.md#step-3-knowledge-base))
 5. **Teams Channel** — Set up the Deal Room channel and publish the agents ([details](deployment/README.md#step-5-teams-setup))
 
-### Importable Artifacts (New ✨)
+### Key Artifacts
 
 | Artifact | Format | Location | How to Use |
 |----------|--------|----------|------------|
 | Agent Topics | YAML | `agents/*/topics/*.yaml` | Paste into Copilot Studio Code Editor |
-| Power Automate Flows | JSON | `flows/power-automate/*.json` | Import via Power Automate portal or paste into Code View |
-| Import Guide | Markdown | `solution/IMPORT-GUIDE.md` | Step-by-step setup instructions |
+| Flow Build Guide | HTML | [`docs/guides/all-flows-guide.html`](docs/guides/all-flows-guide.html) | Open in browser — visual step-by-step for all 6 flows |
+| Flow JSON References | JSON | `flows/power-automate/*.json` | Blueprint for action logic and parameters |
 
-See the full [Deployment Guide](deployment/README.md) and [Import Guide](solution/IMPORT-GUIDE.md) for detailed instructions.
+See the full [Deployment Guide](deployment/README.md) and [Flow Build Guide](docs/guides/all-flows-guide.html) for detailed instructions.
 
 ---
 

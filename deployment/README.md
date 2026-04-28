@@ -54,16 +54,13 @@ Upload the Word versions of the RFP templates from the `templates/` folder to th
 
 ## Step 2: Copilot Agent Setup
 
-### 2.1 Import Solution
-1. Navigate to [PowerApps Maker Portal](https://make.powerapps.com)
+### 2.1 Create Agents in Copilot Studio
+1. Navigate to [Copilot Studio](https://copilotstudio.microsoft.com)
 2. Select your environment
-3. Go to **Solutions** → **Import solution**
-4. Upload the solution zip from `deployment/solution/`
-5. Click **Next** → Sign in for any connection prompts
-6. After import: **Publish all customizations**
+3. Create three new agents (or use existing ones)
 
 ### 2.2 Configure Agents
-Three agents are included in the solution:
+Three agents are required:
 
 | Agent | Purpose | Instructions |
 |-------|---------|-------------|
@@ -108,10 +105,15 @@ Optionally, connect the SharePoint `Knowledge Base` library as a knowledge sourc
 
 ## Step 4: Power Automate Flows
 
-Six flows are defined in this solution. See [Flow Definitions](../flows/flow-definitions.md) for complete specifications.
+Six flows are defined in this solution. See [Flow Definitions](../flows/flow-definitions.md) for complete specifications and the [Visual Build Guide](../docs/guides/all-flows-guide.html) for step-by-step instructions.
 
-### 4.1 Configure Each Flow
-For each flow, update:
+### 4.1 Build Each Flow
+Follow the **[All Flows Build Guide](../docs/guides/all-flows-guide.html)** to create each flow in Power Automate. The guide provides:
+- Numbered steps with exact field values for each action
+- Configuration tables for SharePoint URLs, Teams channels, and connectors
+- Flow diagrams showing the action sequence
+
+After building, update these values in each flow:
 - **SharePoint Site URL** → Your site from Step 1.1
 - **Document Library paths** → Match the library names from Step 1.2
 - **Email addresses** → RFP monitoring mailbox

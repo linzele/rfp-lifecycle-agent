@@ -1,6 +1,8 @@
 # Power Automate Flows — Setup Guide
 
-This folder contains 6 Power Automate flow definitions as JSON reference files. These are **logic references**, not direct import packages. Create your flows from within Copilot Studio, then use these JSONs to build the action logic.
+This folder contains 6 Power Automate flow definitions as JSON reference files. These describe the **logic and action sequence** for each flow — use them as blueprints when building flows in the Power Automate designer.
+
+> **Visual step-by-step guide:** Open the [All Flows Build Guide](../docs/guides/all-flows-guide.html) for a detailed, visual walkthrough of building each flow with screenshots-style instructions, config tables, and prerequisite callouts.
 
 ## Flow Inventory
 
@@ -13,40 +15,46 @@ This folder contains 6 Power Automate flow definitions as JSON reference files. 
 | 5 | `flow-05-evaluation-report.json` | Copilot Studio | Generates evaluation report, posts approval card |
 | 6 | `flow-06-post-deadline-summary.json` | Scheduled (daily 10 AM SGT) | Posts response summary after deadline passes |
 
-## How to Create Flows (Recommended)
+## How to Build the Flows
+
+### Recommended: Follow the Visual Guide
+
+The easiest way to build all 6 flows is to follow the **[All Flows Build Guide](../docs/guides/all-flows-guide.html)** — a single HTML page with:
+
+- Sidebar navigation to jump between flows
+- Numbered step-by-step instructions for each action
+- Configuration tables showing exactly what to enter in each field
+- Prerequisite callouts for SharePoint lists and Word templates
+- Flow diagrams showing the action sequence
+
+Open the HTML file in your browser from the `docs/guides/` folder, or view it on GitHub Pages.
 
 ### Copilot Studio-Triggered Flows (Flows 1, 2, 5)
 
-These flows are called from topic YAML files via `InvokeFlowAction`. Create them from Copilot Studio, then paste the definition via Code View.
+These flows are called from Copilot Studio agent topics. Create them from within Copilot Studio:
 
 1. Open your agent in [Copilot Studio](https://copilotstudio.microsoft.com)
 2. Open the topic that calls this flow (e.g., `create-rfp` topic for Flow 1)
-3. In the topic editor, click the **Call an action** node (+) and select **Create a new flow**
-4. Power Automate opens — click the **Code** toggle (top-right of designer)
-5. **Select all** the existing JSON and **replace** it with the contents of the corresponding flow JSON file
-6. Click the **Code** toggle again to switch back to Designer view — verify the actions loaded correctly
-7. Configure your SharePoint site URL, Teams channel, and connector connections
-8. **Save** the flow — it auto-registers with Copilot Studio
-9. Back in Copilot Studio, the flow appears in the action dropdown — select it
-10. Map the input/output variables to your topic variables
+3. Click the **Call an action** node (+) and select **Create a new flow**
+4. Power Automate opens — follow the [Build Guide](../docs/guides/all-flows-guide.html) to add each action
+5. Configure your SharePoint site URL, Teams channel, and connector connections
+6. **Save** the flow — it auto-registers with Copilot Studio
 
 ### Standalone Flows (Flows 3, 4, 6)
 
-These flows run independently (email triggers or daily schedules). Create them in Power Automate, then paste via Code View.
+These flows run independently (email triggers or daily schedules):
 
 1. Go to [make.powerautomate.com](https://make.powerautomate.com)
 2. Select your environment (must match Copilot Studio environment)
-3. Click **+ Create** and select the trigger type
-   - Flow 3: **Automated cloud flow** with "When a new email arrives" trigger
-   - Flow 4: **Scheduled cloud flow** with daily recurrence at 9 AM SGT
-   - Flow 6: **Scheduled cloud flow** with daily recurrence at 10 AM SGT
-4. Once in the designer, click the **Code** toggle (top-right)
-5. **Replace** the JSON with the contents of the corresponding flow JSON file
-6. Switch back to Designer view, configure connections and save
+3. Click **+ Create** and select the trigger type:
+   - Flow 3: **Automated cloud flow** → "When a new email arrives" trigger
+   - Flow 4: **Scheduled cloud flow** → Daily recurrence at 9 AM SGT
+   - Flow 6: **Scheduled cloud flow** → Daily recurrence at 10 AM SGT
+4. Follow the [Build Guide](../docs/guides/all-flows-guide.html) for the corresponding flow section
 
-### Step-by-Step: Reading the JSON Reference
+### Using the JSON Files as Reference
 
-Each JSON file has this structure. Use it as a blueprint for adding actions in the designer.
+Each JSON file describes the complete flow logic. Use it as a blueprint:
 
 ```
 definition.triggers   → Already set up when you create the flow
@@ -55,14 +63,6 @@ definition.actions    → Each key is one action to add in the designer
   ├── inputs          → The parameters to configure
   └── runAfter        → Which action it follows (determines order)
 ```
-
-**Example** (from flow-01-rfp-creation.json):
-- `Initialize_RFP_Reference` → Add "Initialize variable" action, set name to rfpReference
-- `Switch_Engagement_Type` → Add "Switch" action on engagementType
-- `Populate_Word_Template` → Add "Populate a Word template" action
-- `Create_File_In_SharePoint` → Add "Create file" SharePoint action
-- `Post_Teams_Notification` → Add "Post message in a chat or channel" Teams action
-- `Respond_to_Copilot_Studio` → Add "Respond to Copilot" action with output variables
 
 ## Configuration Values
 
