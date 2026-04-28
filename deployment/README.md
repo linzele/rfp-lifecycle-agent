@@ -2,13 +2,14 @@
 
 ## Overview
 
-Deploying the Kuok Group RFP Lifecycle Agent involves 5 key setup areas:
+Deploying the Kuok Group RFP Lifecycle Agent involves 6 key setup areas:
 
-1. SharePoint Setup
-2. Copilot Agent Setup
-3. Knowledge Base Configuration
-4. Power Automate Flow Setup
-5. Microsoft Teams Setup
+1. SharePoint Setup (document libraries and lists)
+2. Dataverse Setup (structured knowledge tables)
+3. Copilot Agent Setup (3 agents in Copilot Studio)
+4. Knowledge Base Configuration (SharePoint files + Dataverse tables)
+5. Power Automate Flow Setup (6 flows with approval step)
+6. Microsoft Teams Setup (Deal Room channel + agent publishing)
 
 ---
 
@@ -38,9 +39,11 @@ Create the following document libraries:
 |-------------|---------|
 | `RFP Templates` | Stores Word templates for each engagement type |
 | `Issued RFPs` | Stores generated RFP documents |
+| `Approved RFP Packages` | Stores approved RFPs ready for vendor distribution |
 | `Partner Responses` | Stores incoming partner proposals |
 | `Evaluation Reports` | Stores generated evaluation reports |
 | `Knowledge Base` | Stores sample RFPs and reference documents |
+| `Vendor Distribution List` | Stores vendor contact lists and distribution groups per RFP |
 
 ### 1.3 Create SharePoint Lists
 Create the tracking lists defined in [Flow Definitions](../flows/flow-definitions.md#sharepoint-lists-required):
@@ -49,6 +52,40 @@ Create the tracking lists defined in [Flow Definitions](../flows/flow-definition
 
 ### 1.4 Upload Templates
 Upload the Word versions of the RFP templates from the `templates/` folder to the `RFP Templates` library.
+
+---
+
+## Step 1.5: Dataverse Setup
+
+The RFP Creator Agent uses Dataverse tables as structured knowledge sources for procurement templates, compliance criteria, and vendor evaluation data.
+
+### 1.5.1 Create Dataverse Tables
+
+In [Power Apps Maker Portal](https://make.powerapps.com) → **Tables** → **New table**, create the following:
+
+| Table Name | Description | Key Columns |
+|-----------|-------------|-------------|
+| `Procurement Template` | Reusable procurement templates and clauses | Name, Category (Turnkey/Managed Services/Augmented Resources), Template Content, Version, Status (Active/Archived) |
+| `Compliance Criteria` | Regulatory and internal compliance requirements | Criteria Name, Category, Description, Mandatory (Yes/No), Applicable Engagement Types |
+| `Vendor Evaluation DB` | Historical vendor performance and evaluation records | Vendor Name, Engagement Type, Overall Score, Strengths, Weaknesses, Last Evaluated Date |
+| `Project Spec Library` | Project specifications and technical requirements | Spec Name, Project Type, Description, Technical Requirements, Attachments |
+
+### 1.5.2 Populate Initial Data
+
+1. Open each table in Power Apps
+2. Add initial rows based on your organisation's existing data:
+   - **Procurement Templates** — Import standard clauses from existing RFP documents
+   - **Compliance Criteria** — Add regulatory requirements (e.g., data residency, security standards)
+   - **Vendor Evaluation DB** — Import historical vendor scorecards if available
+   - **Project Spec Library** — Add common project specifications and technical standards
+
+### 1.5.3 Connect Dataverse to Copilot Studio
+
+For each agent that needs Dataverse knowledge:
+1. In Copilot Studio, go to **Knowledge** → **Add knowledge**
+2. Select **Dataverse** as the source
+3. Choose the relevant tables (e.g., RFP Creator needs all 4 tables)
+4. Wait for indexing to complete
 
 ---
 
@@ -84,7 +121,7 @@ For the **RFP Evaluator Agent**:
 
 ## Step 3: Knowledge Base
 
-### 3.1 Upload Knowledge Documents
+### 3.1 Upload Knowledge Documents (SharePoint)
 In Copilot Studio, for each agent:
 1. Go to the **Knowledge** tab
 2. Click **Add knowledge** → **Upload Files**
@@ -98,7 +135,17 @@ In Copilot Studio, for each agent:
 
 4. Wait for indexing to complete (approximately 10–15 minutes per batch)
 
-### 3.2 Connect SharePoint Knowledge
+### 3.2 Connect Dataverse Knowledge
+For the **RFP Creator Agent** (primary Dataverse consumer):
+1. Go to **Knowledge** → **Add knowledge** → **Dataverse**
+2. Select: `Procurement Template`, `Compliance Criteria`, `Vendor Evaluation DB`, `Project Spec Library`
+3. This gives the agent access to RFP, compliance, security data, and project plan docs
+
+For the **RFP Evaluator Agent**:
+1. Add **Dataverse** knowledge: `Vendor Evaluation DB`, `Compliance Criteria`
+2. This enables the evaluator to cross-reference historical vendor performance
+
+### 3.3 Connect SharePoint Knowledge (Optional)
 Optionally, connect the SharePoint `Knowledge Base` library as a knowledge source so agents can reference new documents added over time without manual re-upload.
 
 ---
@@ -115,11 +162,23 @@ Follow the **[All Flows Build Guide](../docs/guides/all-flows-guide.html)** to c
 
 After building, update these values in each flow:
 - **SharePoint Site URL** → Your site from Step 1.1
-- **Document Library paths** → Match the library names from Step 1.2
+- **Document Library paths** → Match the library names from Step 1.2 (including `Approved RFP Packages` and `Vendor Distribution List`)
 - **Email addresses** → RFP monitoring mailbox
 - **Teams channel** → Deal Room channel from Step 5
+- **Dataverse table names** → Match the tables from Step 1.5
 
-### 4.2 Ensure All Flows Are Turned On
+### 4.2 Configure the Approval Step
+The RFP Creation flow (Flow 1) should include an approval step before the final RFP is distributed to vendors:
+
+1. In Flow 1, after the RFP document is generated, add an **Approvals - Start and wait for an approval** action
+2. Set **Approval type** → Approve/Reject - First to respond
+3. Set **Assigned to** → The procurement manager or approver email
+4. Set **Details** → Include the RFP reference number and link to the generated document
+5. Add a **Condition** after the approval:
+   - If **Approved** → Copy the document to `Approved RFP Packages` library, then proceed to distribution
+   - If **Rejected** → Post a Teams notification with rejection comments, return to draft status
+
+### 4.3 Ensure All Flows Are Turned On
 In the Maker Portal → **Flows**, verify all 6 flows show **Status: On**.
 
 ---
