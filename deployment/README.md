@@ -2,7 +2,7 @@
 
 ## Overview
 
-Deploying the Kuok Group RFP Lifecycle Agent involves 5 key setup areas:
+Deploying the RFP Lifecycle Agent involves 5 key setup areas:
 
 1. SharePoint Setup
 2. Copilot Agent Setup
@@ -28,7 +28,7 @@ Deploying the Kuok Group RFP Lifecycle Agent involves 5 key setup areas:
 ### 1.1 Create SharePoint Site
 1. Go to `https://<your-tenant>.sharepoint.com/` → **Create site**
 2. Select **Team Site** → **Standard Team** template
-3. Name: `Kuok RFP Management` (or as desired)
+3. Name: `RFP Management` (or as desired)
 4. **Save the URL** — you'll need it for flow configuration
 
 ### 1.2 Create Document Libraries

@@ -17,4 +17,4 @@ beginDialog:
       id: greeting_message
       activity:
         text:
-          -  Welcome to the Kuok Group RFP Issuer Agent!  I can help you   Issue an RFP to invited partners via email  Check RFP status and partner response tracking  Send reminders to partners with pending responses  Say Issue RFP to distribute an RFP, or Check Status to review tracking.
+          -  Welcome to the RFP Issuer Agent!  I can help you   Issue an RFP to invited partners via email  Check RFP status and partner response tracking  Send reminders to partners with pending responses  Say Issue RFP to distribute an RFP, or Check Status to review tracking.

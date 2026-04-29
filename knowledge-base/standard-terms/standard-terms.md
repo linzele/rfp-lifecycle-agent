@@ -1,7 +1,7 @@
 # Standard Terms by Engagement Type
 
 ## Purpose
-This document defines the standard contractual terms and conditions that Kuok Group IT includes in RFPs by engagement type. These terms serve as the baseline — specific engagements may require additional terms as advised by Kuok Group Legal.
+This document defines the standard contractual terms and conditions that [Organisation Name] IT includes in RFPs by engagement type. These terms serve as the baseline — specific engagements may require additional terms as advised by [Organisation Name] Legal.
 
 ---
 
@@ -13,8 +13,8 @@ This document defines the standard contractual terms and conditions that Kuok Gr
 - Confidentiality obligations survive contract termination for a period of 3 years
 
 ### Intellectual Property
-- All IP created during the engagement belongs to Kuok Group unless explicitly agreed otherwise
-- Partner retains ownership of pre-existing IP but grants Kuok Group a perpetual, non-exclusive licence to use it in connection with the deliverables
+- All IP created during the engagement belongs to [Organisation Name] unless explicitly agreed otherwise
+- Partner retains ownership of pre-existing IP but grants [Organisation Name] a perpetual, non-exclusive licence to use it in connection with the deliverables
 
 ### Data Protection
 - Partner must comply with Singapore PDPA and any other applicable data protection regulations
@@ -28,7 +28,7 @@ This document defines the standard contractual terms and conditions that Kuok Gr
 ### Termination
 - Either party may terminate with 30 days written notice (without cause)
 - Immediate termination for material breach (with 14 days cure period)
-- Kuok Group may terminate for convenience with 30 days notice
+- [Organisation Name] may terminate for convenience with 30 days notice
 
 ### Dispute Resolution
 - Governing law: Laws of Singapore
@@ -89,24 +89,24 @@ This document defines the standard contractual terms and conditions that Kuok Gr
 
 ### Resource Management
 - Replacement guarantee: Underperforming resources replaced within 5 business days
-- Kuok Group retains right to request replacement with 5 business days notice
+- [Organisation Name] retains right to request replacement with 5 business days notice
 - Partner provides minimum 30 days notice before withdrawing a resource
 
 ### Rates
 - Rates fixed for the initial contract term
 - Rate review at renewal only
-- Overtime rates: 1.5x standard rate (pre-approved by Kuok Group only)
+- Overtime rates: 1.5x standard rate (pre-approved by [Organisation Name] only)
 
 ### Working Arrangements
-- Resources report to Kuok Group line management
-- Resources follow Kuok Group policies and procedures while on assignment
-- Resources are not Kuok Group employees — partner remains the employer
+- Resources report to [Organisation Name] line management
+- Resources follow [Organisation Name] policies and procedures while on assignment
+- Resources are not [Organisation Name] employees — partner remains the employer
 
 ### Background Checks
 - Partner must conduct background checks on all proposed resources
 - Checks include: employment history verification, criminal record check, qualification verification
-- Results to be shared with Kuok Group before resource commences
+- Results to be shared with [Organisation Name] before resource commences
 
 ---
 
-> **Note:** These are standard terms for RFP purposes. Final contractual terms will be negotiated and agreed with the selected partner and reviewed by Kuok Group Legal before execution.
+> **Note:** These are standard terms for RFP purposes. Final contractual terms will be negotiated and agreed with the selected partner and reviewed by [Organisation Name] Legal before execution.

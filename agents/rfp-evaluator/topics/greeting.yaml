@@ -17,4 +17,4 @@ beginDialog:
       id: greeting_message
       activity:
         text:
-          -  Welcome to the Kuok Group RFP Evaluator Agent!  I can help you   Evaluate RFP responses against defined criteria with AI-assisted scoring  Compare proposals across partners (technical, commercial, risk)  Generate evaluation reports for internal approval  Say Evaluate Responses to start an evaluation, or Generate Report to compile findings.
+          -  Welcome to the RFP Evaluator Agent!  I can help you   Evaluate RFP responses against defined criteria with AI-assisted scoring  Compare proposals across partners (technical, commercial, risk)  Generate evaluation reports for internal approval  Say Evaluate Responses to start an evaluation, or Generate Report to compile findings.

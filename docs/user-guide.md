@@ -1,4 +1,4 @@
-# User Guide — Kuok Group RFP Lifecycle Agent
+# User Guide — RFP Lifecycle Agent
 
 ## Getting Started
 
@@ -94,7 +94,7 @@ All RFP activity is centralised in the **Deal Room** Teams channel:
 ## SharePoint Document Structure
 
 ```
-Kuok RFP Management/
+RFP Management/
 ├── RFP Templates/           ← Word templates per engagement type
 ├── Issued RFPs/
 │   └── KG-RFP-2026-001/    ← Generated RFP documents

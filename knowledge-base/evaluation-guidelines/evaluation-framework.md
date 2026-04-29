@@ -1,7 +1,7 @@
 # Evaluation Framework
 
 ## Purpose
-This document defines the standard evaluation methodology used by Kuok Group IT to assess partner responses to RFPs. It ensures fair, consistent, and transparent evaluation across all procurement engagements.
+This document defines the standard evaluation methodology used by the IT team to assess partner responses to RFPs. It ensures fair, consistent, and transparent evaluation across all procurement engagements.
 
 ---
 

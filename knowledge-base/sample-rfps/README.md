@@ -9,7 +9,7 @@ This folder contains sample RFP documents that serve as the knowledge base for t
 3. The agents will reference these documents when generating new RFPs and evaluating responses
 
 ## Recommended Documents to Upload
-- 3–5 past RFPs issued by Kuok Group (one per engagement type if available)
+- 3–5 past RFPs issued by your organisation (one per engagement type if available)
 - Sample partner responses (for the Evaluator Agent training)
 - Previous evaluation reports
 - Industry-standard RFP templates relevant to your sector
@@ -25,5 +25,5 @@ Examples:
 
 ## Important Notes
 - Remove any sensitive commercial information before uploading
-- Ensure documents comply with Kuok Group's data classification policies
+- Ensure documents comply with your organisation's data classification policies
 - Indexing new documents in Copilot Studio takes approximately 10–15 minutes

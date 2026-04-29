@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your interest in contributing to the Kuok Group RFP Lifecycle Agent.
+Thank you for your interest in contributing to the RFP Lifecycle Agent.
 
 ## How to Contribute
 

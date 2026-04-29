@@ -11,14 +11,14 @@
 
 ## 1. Introduction
 
-### 1.1 About Kuok Group
-Kuok Group is a diversified multinational conglomerate headquartered in Singapore with business interests spanning across multiple sectors. This RFP is issued by the Kuok Group IT Department.
+### 1.1 About [Organisation Name]
+[Organisation Name] is the issuing organisation for this RFP. Update this section with a short overview of the organisation, its sector, and the context relevant to this procurement.
 
 ### 1.2 Purpose
-Kuok Group is seeking proposals from qualified partners to deliver a turnkey project as described in this RFP. The selected partner will be responsible for the full end-to-end delivery including design, build, test, deployment, and handover.
+[Organisation Name] is seeking proposals from qualified partners to deliver a turnkey project as described in this RFP. The selected partner will be responsible for the full end-to-end delivery including design, build, test, deployment, and handover.
 
 ### 1.3 Confidentiality
-This RFP and all associated documents are confidential. Recipients must not share, distribute, or disclose any information contained herein without prior written consent from Kuok Group.
+This RFP and all associated documents are confidential. Recipients must not share, distribute, or disclose any information contained herein without prior written consent from [Organisation Name].
 
 ---
 
@@ -120,9 +120,9 @@ Partners must structure their proposals as follows:
 ## 6. Terms and Conditions
 
 ### 6.1 RFP Process Rules
-- Kuok Group reserves the right to accept or reject any or all proposals
-- Kuok Group reserves the right to negotiate with one or more respondents
-- Kuok Group reserves the right to cancel this RFP at any time
+- [Organisation Name] reserves the right to accept or reject any or all proposals
+- [Organisation Name] reserves the right to negotiate with one or more respondents
+- [Organisation Name] reserves the right to cancel this RFP at any time
 - Submission of a proposal does not constitute a contract or commitment
 - All costs of preparing the proposal are borne by the respondent
 
@@ -147,4 +147,4 @@ Partners must structure their proposals as follows:
 [Attached separately]
 
 ### Appendix B: Terms and Conditions
-[To be attached by Kuok Group Legal]
+[To be attached by [Organisation Name] Legal]

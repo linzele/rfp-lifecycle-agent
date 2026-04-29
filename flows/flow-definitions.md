@@ -1,6 +1,6 @@
 # Power Automate Flow Definitions
 
-This document defines the Power Automate flows required for the Kuok Group RFP Lifecycle Agent solution.
+This document defines the Power Automate flows required for the RFP Lifecycle Agent solution.
 
 ---
 

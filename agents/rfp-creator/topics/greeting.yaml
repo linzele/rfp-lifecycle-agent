@@ -17,4 +17,4 @@ beginDialog:
       id: greeting_message
       activity:
         text:
-          -  Welcome to the Kuok Group RFP Creator Agent!  I can help you create a professional RFP for any of these engagement types   Turnkey Project  End-to-end project delivery  Managed Services  Ongoing service operations with SLAs  Augmented Resources  Staff augmentation and team extension  Say Create RFP to get started, or ask me anything about the RFP process.
+          -  Welcome to the RFP Creator Agent!  I can help you create a professional RFP for any of these engagement types   Turnkey Project  End-to-end project delivery  Managed Services  Ongoing service operations with SLAs  Augmented Resources  Staff augmentation and team extension  Say Create RFP to get started, or ask me anything about the RFP process.

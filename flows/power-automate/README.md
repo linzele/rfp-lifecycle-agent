@@ -70,7 +70,7 @@ Replace these placeholders when building your flows:
 
 | Placeholder | Replace With |
 |-------------|-------------|
-| `CONFIGURE_SHAREPOINT_SITE_URL` | Your SharePoint site URL (e.g., `https://kuokgroup.sharepoint.com/sites/IT-RFP`) |
+| `CONFIGURE_SHAREPOINT_SITE_URL` | Your SharePoint site URL (e.g., `https://yourtenant.sharepoint.com/sites/IT-RFP`) |
 | `CONFIGURE_DOCUMENT_LIBRARY_ID` | The document library GUID from SharePoint |
 | `CONFIGURE_TEAMS_CHANNEL_ID` | The Teams Deal Room channel ID |
 

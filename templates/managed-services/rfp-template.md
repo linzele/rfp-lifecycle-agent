@@ -9,11 +9,11 @@
 
 ## 1. Introduction
 
-### 1.1 About Kuok Group
-Kuok Group is a diversified multinational conglomerate headquartered in Singapore. This RFP is issued by the Kuok Group IT Department.
+### 1.1 About [Organisation Name]
+[Organisation Name] is the issuing organisation for this RFP. Update this section with a short overview of the organisation, its operating environment, and the service context.
 
 ### 1.2 Purpose
-Kuok Group is seeking proposals from qualified partners to provide managed IT services as described in this RFP on an ongoing operational basis.
+[Organisation Name] is seeking proposals from qualified partners to provide managed IT services as described in this RFP on an ongoing operational basis.
 
 ---
 
@@ -23,7 +23,7 @@ Kuok Group is seeking proposals from qualified partners to provide managed IT se
 [Describe current IT environment, pain points, and reasons for seeking managed services]
 
 ### 2.2 Business Objectives
-[What outcomes does Kuok Group expect from this managed service engagement]
+[What outcomes does [Organisation Name] expect from this managed service engagement]
 
 ### 2.3 Scope of Services
 [Detailed description of services to be managed]
@@ -100,8 +100,8 @@ Kuok Group is seeking proposals from qualified partners to provide managed IT se
 ---
 
 ## 6. Terms and Conditions
-[Same as Turnkey Project template — Kuok Group standard terms apply]
+Same as Turnkey Project template — [Organisation Name] standard terms apply.
 
 ## 7. Contact Information
 **RFP Contact Person:** [Name]  
-**Email:** [Email]  
+**Email:** [Email]

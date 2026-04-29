@@ -114,7 +114,7 @@
                       "parameters": {
                         "emailMessage/To": "@items('For_Each_Pending_Partner')['Email']",
                         "emailMessage/Subject": "@{outputs('Set_Reminder_Type')} REMINDER: @{items('For_Each_Active_RFP')?['Title']} — Response Due @{items('For_Each_Active_RFP')?['SubmissionDeadline']}",
-                        "emailMessage/Body": "<html><body><p>Dear @{items('For_Each_Pending_Partner')['PartnerName']},</p><p>This is a <strong>@{toLower(outputs('Set_Reminder_Type'))} reminder</strong> that the submission deadline for <strong>@{items('For_Each_Active_RFP')?['Title']}</strong> is approaching.</p><p><strong>Deadline:</strong> @{items('For_Each_Active_RFP')?['SubmissionDeadline']}<br/><strong>Days remaining:</strong> @{outputs('Calculate_Days_Until_Deadline')}</p><p>Please submit your response at your earliest convenience.</p><p>Best regards,<br/>Kuok Group IT</p></body></html>",
+                        "emailMessage/Body": "<html><body><p>Dear @{items('For_Each_Pending_Partner')['PartnerName']},</p><p>This is a <strong>@{toLower(outputs('Set_Reminder_Type'))} reminder</strong> that the submission deadline for <strong>@{items('For_Each_Active_RFP')?['Title']}</strong> is approaching.</p><p><strong>Deadline:</strong> @{items('For_Each_Active_RFP')?['SubmissionDeadline']}<br/><strong>Days remaining:</strong> @{outputs('Calculate_Days_Until_Deadline')}</p><p>Please submit your response at your earliest convenience.</p><p>Best regards,<br/>IT department</p></body></html>",
                         "emailMessage/Importance": "@if(equals(outputs('Set_Reminder_Type'), 'FINAL'), 'High', 'Normal')"
                       }
                     }

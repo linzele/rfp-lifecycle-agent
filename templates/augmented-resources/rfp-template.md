@@ -9,11 +9,11 @@
 
 ## 1. Introduction
 
-### 1.1 About Kuok Group
-Kuok Group is a diversified multinational conglomerate headquartered in Singapore. This RFP is issued by the Kuok Group IT Department.
+### 1.1 About [Organisation Name]
+[Organisation Name] is the issuing organisation for this RFP. Update this section with a short overview of the organisation and the workforce context for this request.
 
 ### 1.2 Purpose
-Kuok Group is seeking proposals from qualified partners to provide IT staff augmentation resources to supplement the in-house IT team for specific roles and skill sets.
+[Organisation Name] is seeking proposals from qualified partners to provide IT staff augmentation resources to supplement the in-house IT team for specific roles and skill sets.
 
 ---
 
@@ -90,8 +90,8 @@ Kuok Group is seeking proposals from qualified partners to provide IT staff augm
 ---
 
 ## 6. Terms and Conditions
-[Kuok Group standard terms apply]
+[Organisation Name] standard terms apply.
 
 ## 7. Contact Information
 **RFP Contact Person:** [Name]  
-**Email:** [Email]  
+**Email:** [Email]

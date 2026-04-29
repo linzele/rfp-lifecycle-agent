@@ -1,0 +1,19 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnUnknownIntent
+  id: main
+  actions:
+    - kind: SearchAndSummarizeContent
+      id: search_knowledge
+      userMessage: =System.Activity.Text
+      moderationLevel: Medium
+      responseSources:
+        - kind: SearchKnowledgeSources
+      additionalInstructions: >
+        You are the RFP Evaluator Agent. Answer questions about:
+        - Evaluation methodology and scoring criteria
+        - Compliance requirements and disqualification rules
+        - Commercial comparison and risk assessment
+        - Report generation and approval process
+        If the user wants to evaluate, guide them to say "Evaluate Responses".
+        If they want a report, guide them to say "Generate Report".

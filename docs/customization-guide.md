@@ -24,7 +24,7 @@ This solution is designed to be easily extended. All configuration and customisa
 
 ### Changing Standard Terms
 1. Edit `knowledge-base/standard-terms/standard-terms.md`
-2. Have Kuok Group Legal review any changes
+2. Have your legal team review any changes
 3. Re-upload to Copilot Studio knowledge sources
 
 ---
