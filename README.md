@@ -5,7 +5,7 @@ An end-to-end AI agent solution for **an IT department** that automates the full
 > **Built for:** Your IT Team  
 > **Foundation:** [Microsoft Agent for RFP Response Solution Accelerator](https://github.com/microsoft/agent-for-rfp-response-solution-accelerator)  
 > **Agent Patterns:** [Awesome Copilot Studio Agents](https://github.com/kesslernity/awesome-copilot-studio-agents)  
-> **Flow Build Guide:** [Step-by-step visual guide](https://linzele.github.io/kuok-rfp-agent/flows/power-automate/all-flows-guide.html)
+> **Flow Build Guide:** [Step-by-step visual guide](flows/power-automate/all-flows-guide.html)
 
 ---
 

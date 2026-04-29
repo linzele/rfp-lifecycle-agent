@@ -2,7 +2,7 @@
 
 This folder contains 6 Power Automate flow definitions as JSON reference files. These describe the **logic and action sequence** for each flow — use them as blueprints when building flows in the Power Automate designer.
 
-> **Visual step-by-step guide:** Open the [All Flows Build Guide](https://linzele.github.io/kuok-rfp-agent/flows/power-automate/all-flows-guide.html) for a detailed, visual walkthrough of building each flow with screenshots-style instructions, config tables, and prerequisite callouts.
+> **Visual step-by-step guide:** Open the [All Flows Build Guide](all-flows-guide.html) for a detailed, visual walkthrough of building each flow with screenshots-style instructions, config tables, and prerequisite callouts.
 
 ## Flow Inventory
 
